@@ -41,6 +41,14 @@ No third-party identity, analytics, advertising, or behavioral-tracking resource
 
 On 2026-08-12 UTC, ROOT-Gate’s prior all-interface listener was remediated at the application boundary rather than by adding a redundant firewall exception. The production systemd unit now provides `ROOT_BIND_HOST=127.0.0.1`, and the Node service respects that setting. Remote listener inspection confirmed that `4174` is bound exclusively to `127.0.0.1`; Caddy continues to provide the public HTTPS entry point. Direct public probes over IPv4 and IPv6 did not reach the Node service, while the public HTTPS authentication endpoint remained healthy.
 
+## Connection Center Release
+
+Release `20260812T235255Z-8199b36` added ROOT’s Mendocino County Connection Center and a member-controlled private action plan. The release passed 11 automated tests locally and again on ROOT-Gate, followed by a successful production build.
+
+The live JavaScript bundle contained the Connection Center marker. A disposable production account successfully saved the reviewed `mendo-benefits` source, changed its own private step from `saved` to `ready`, and then deleted the account, which removed the test account and its stored action plan. The pathway API accepts only reviewed public source identifiers and three member-controlled statuses: `saved`, `ready`, and `complete`.
+
+The live source catalog contains nine reviewed Mendocino County public pathways across housing, food navigation, benefits, work, broad 211 navigation, behavioral-health access, non-crisis support, and 24/7 mental-health crisis support. ROOT sends no provider-facing referral data, submits no application, determines no eligibility, and does not claim provider availability. The detailed source and publication boundary record is maintained in `CONNECTION_CENTER_SOURCES.md`.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.

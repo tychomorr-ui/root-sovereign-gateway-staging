@@ -72,8 +72,8 @@
 - [ ] Define and obtain approval for a consent-controlled interoperability model linking ROOT with universaltruth.life, resonate-earth.live, and xinus.one before implementing any cross-application data exchange or node federation.
 - [ ] Define and obtain approval for the Monarch OS capability model and reproducible UEFI build roadmap before creating or distributing any bootable image.
 - [x] Deliver a conceptual analysis of Monarch OS as a local-first, optionally mesh-participating sovereign workstation, without creating or modifying an operating-system image in this project.
-- [ ] Upgrade ROOT from a verified outbound-link directory to a privacy-preserving, member-controlled Mendocino County connection and action-plan experience using only verified real sources and no fabricated services or providers.
-- [ ] Add a reviewed Mendocino County source catalog with clear need categories, official source provenance, review dates, and explicit availability limitations.
-- [ ] Add an authenticated, encrypted-at-rest private action plan with member-selected source steps and no provider-facing data transfer.
-- [ ] Add an urgent-support boundary that distinguishes emergency response, 24/7 crisis support, non-crisis support, and ordinary resource navigation without claiming dispatch or clinical services.
-- [ ] Add automated policy and action-plan validation tests, then rebuild and release the connection upgrade to ROOT-Gate.
+- [x] Upgrade ROOT from a verified outbound-link directory to a privacy-preserving, member-controlled Mendocino County connection and action-plan experience using only verified real sources and no fabricated services or providers.
+- [x] Add a reviewed Mendocino County source catalog with clear need categories, official source provenance, review dates, and explicit availability limitations.
+- [x] Add an authenticated, encrypted-at-rest private action plan with member-selected source steps and no provider-facing data transfer.
+- [x] Add an urgent-support boundary that distinguishes emergency response, 24/7 crisis support, non-crisis support, and ordinary resource navigation without claiming dispatch or clinical services.
+- [x] Add automated policy and action-plan validation tests, then rebuild and release the connection upgrade to ROOT-Gate.
