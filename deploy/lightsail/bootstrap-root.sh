@@ -125,6 +125,10 @@ ${DOMAIN} {
 }
 EOF
 
+ufw default deny incoming
+ufw default allow outgoing
+ufw --force delete allow 4174/tcp || true
+ufw --force delete allow 4174 || true
 ufw allow OpenSSH
 ufw allow 80/tcp
 ufw allow 443/tcp

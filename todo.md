@@ -52,3 +52,14 @@
 - [x] Verify the production account lifecycle, TLS certificate, redirect, response headers, encrypted data format, origin rejection, and no-tracking resource boundary.
 - [x] Install and verify a root-owned, narrowly authorized ROOT release activator so rootdeploy can activate vetted releases without general sudo access.
 - [x] Recheck the external TLS handshake on root.nexinus.net after the Lightsail 443 rule update, then complete the disposable account and origin-rejection acceptance tests.
+- [ ] Document the active Oregon, Frankfurt, and Singapore instance inventory with a clear permitted role and prohibited member-data scope for each host.
+- [ ] Define an encrypted recovery policy that keeps Oregon member data primary and requires an explicit cross-border decision before any Frankfurt or Singapore backup replication.
+- [ ] Map the next operational gates for Tesseract-Terminus, Tesseract-A, and Kether-Gate without activating member-data synchronization.
+- [ ] Run a read-only ROOT-Gate audit for installed software, active services, listening ports, disk usage, firewall posture, system health, and recent service failures.
+- [ ] Attempt only read-only credential-based access checks for Tesseract-Terminus, Tesseract-A, and Kether-Gate; do not alter any instance.
+- [ ] Deliver a verified instance-by-instance contents and health report with clearly separated observations, unknowns, and corrective priorities.
+- [x] Confirm that ROOT-Gate’s internal Node port 4174 is externally reachable despite its intended Caddy-only architecture.
+- [ ] With explicit approval, close public ingress to port 4174 at the Lightsail and host firewalls while retaining public 80/443 and administrative 22 access.
+- [ ] Apply the authorized 4174 closure in both the host firewall and Lightsail network firewall, then verify 22, 80, and 443 remain reachable.
+- [x] Confirm that the Lightsail edge firewall already permits only 22, 80, and 443, with no separate 4174 rule.
+- [ ] Update the ROOT host bootstrap to enforce a default-deny incoming policy and remove any host-level 4174 allowance before rerunning it under the AWS default administrator key.
