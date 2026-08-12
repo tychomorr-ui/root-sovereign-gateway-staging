@@ -20,7 +20,7 @@ sudo chown rootdeploy:rootdeploy /home/rootdeploy/.ssh/authorized_keys
 sudo chmod 0600 /home/rootdeploy/.ssh/authorized_keys
 ```
 
-For the initial deployment, either permit a narrow, reviewed sudo policy for the deployment operations or use the default administrator key interactively for the bootstrap only. Do not grant unrestricted routine root access merely for convenience.
+The bootstrap script installs a root-owned `/usr/local/sbin/root-gateway-install-release` activator and a narrowly scoped sudo rule. The `rootdeploy` account may invoke only that activator; it cannot run general sudo commands. The activator validates the release identifier, copies the uploaded package into a root-owned release area, runs tests and builds as `rootapp`, activates only a healthy release, and restores the prior release if the new service fails.
 
 ## Key handling
 

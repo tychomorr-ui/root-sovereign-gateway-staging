@@ -19,30 +19,14 @@ RSYNC_SSH="ssh -i ${KEY_PATH} -o IdentitiesOnly=yes -o StrictHostKeyChecking=acc
 pnpm test
 pnpm build
 
-"${SSH[@]}" "${REMOTE}" "sudo -n install -d -m 0750 -o rootapp -g rootapp /opt/root-gateway/releases/${RELEASE_ID}"
+"${SSH[@]}" "${REMOTE}" "mkdir -p /home/rootdeploy/releases/${RELEASE_ID} && chmod 0700 /home/rootdeploy/releases/${RELEASE_ID}"
 rsync -az --delete \
   --exclude '.git/' --exclude 'node_modules/' --exclude 'dist/' --exclude 'data/' --exclude '.env' --exclude '.env.*' \
-  -e "${RSYNC_SSH}" ./ "${REMOTE}:/tmp/root-release-${RELEASE_ID}/"
+  -e "${RSYNC_SSH}" ./ "${REMOTE}:/home/rootdeploy/releases/${RELEASE_ID}/"
 
-"${SSH[@]}" "${REMOTE}" "sudo -n bash -s -- '${RELEASE_ID}' '${DOMAIN}'" <<'REMOTE_SCRIPT'
-set -Eeuo pipefail
-release_id="$1"
-domain="$2"
-staging="/tmp/root-release-${release_id}"
-target="/opt/root-gateway/releases/${release_id}"
+"${SSH[@]}" "${REMOTE}" "sudo -n /usr/local/sbin/root-gateway-install-release '${RELEASE_ID}'"
 
-test -f /etc/root-gateway/root.env
-install -d -m 0750 -o rootapp -g rootapp "${target}"
-rsync -a --delete --exclude 'deploy/' "${staging}/" "${target}/"
-chown -R rootapp:rootapp "${target}"
-rm -rf "${staging}"
-
-sudo -u rootapp bash -lc "cd '${target}' && corepack pnpm install --frozen-lockfile && corepack pnpm test && corepack pnpm build"
-ln -sfn "${target}" /opt/root-gateway/current
-systemctl restart root-gateway
 sleep 2
-systemctl --no-pager --full status root-gateway
-curl --fail --silent --show-error --resolve "${domain}:443:127.0.0.1" "https://${domain}/api/auth/me" >/dev/null || true
-REMOTE_SCRIPT
+curl --fail --silent --show-error --max-time 15 "https://${DOMAIN}/api/auth/me" >/dev/null
 
 echo "Release ${RELEASE_ID} deployed. Verify https://${DOMAIN}/api/auth/me and browser headers before member invitation."

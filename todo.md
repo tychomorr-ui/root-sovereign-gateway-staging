@@ -47,3 +47,7 @@
 - [ ] Verify inbound ports 80 and 443, valid TLS issuance for root.nexinus.net, HTTPS redirection, and ROOT production security headers.
 - [x] Recheck root.nexinus.net DNS propagation after the submitted A-record update and confirm it resolves to the Oregon static IPv4 from an external resolver.
 - [x] Verify successful SSH authentication with the dedicated ROOT deploy key as rootdeploy before granting the controlled deployment privilege.
+- [ ] Verify the completed Oregon bootstrap produced the ROOT secret file, private data directory, systemd definition, Caddy configuration, and firewall prerequisites.
+- [ ] Upload and activate the audited ROOT release on root.nexinus.net using the dedicated deploy key.
+- [ ] Verify the production account lifecycle, TLS certificate, redirect, response headers, encrypted data format, origin rejection, and no-tracking resource boundary.
+- [ ] Install and verify a root-owned, narrowly authorized ROOT release activator so rootdeploy can activate vetted releases without general sudo access.
