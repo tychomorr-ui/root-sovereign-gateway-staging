@@ -13,6 +13,7 @@
 | Truth Talk visual check | The clean `/truth` surface presents claim type, declared sources, correction path, and non-binary TruthOK signals while explicitly separating public conversation from private member-pathway data. |
 | Independent staging check | The verified static ROOT build is live at the temporary staging URL on port 4173; its gateway page loads with the public control surface, regional-source boundaries, and link-only ecosystem handoffs. |
 | Tracking-resource check | Browser resource inspection on the temporary staging URL returned only the staging origin; no third-party tracking or advertising host was loaded. |
+| Persistent-host investigation | The project’s Replit reference returns a not-found page, and the browser has no authenticated GitHub session to enable Pages. The public deployment repository and Pages workflow are retained for activation when repository Pages permission is available. |
 
 ## Release Boundary
 
