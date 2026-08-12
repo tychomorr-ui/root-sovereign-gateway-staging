@@ -20,9 +20,14 @@ pnpm test
 pnpm build
 
 "${SSH[@]}" "${REMOTE}" "mkdir -p /home/rootdeploy/releases/${RELEASE_ID} && chmod 0700 /home/rootdeploy/releases/${RELEASE_ID}"
-rsync -az --delete \
-  --exclude '.git/' --exclude 'node_modules/' --exclude 'dist/' --exclude 'data/' --exclude '.env' --exclude '.env.*' \
-  -e "${RSYNC_SSH}" ./ "${REMOTE}:/home/rootdeploy/releases/${RELEASE_ID}/"
+if command -v rsync >/dev/null 2>&1; then
+  rsync -az --delete \
+    --exclude '.git/' --exclude 'node_modules/' --exclude 'dist/' --exclude 'data/' --exclude '.env' --exclude '.env.*' \
+    -e "${RSYNC_SSH}" ./ "${REMOTE}:/home/rootdeploy/releases/${RELEASE_ID}/"
+else
+  tar --exclude='.git' --exclude='node_modules' --exclude='dist' --exclude='data' --exclude='.env' --exclude='.env.*' -czf - . | \
+    "${SSH[@]}" "${REMOTE}" "tar -xzf - -C /home/rootdeploy/releases/${RELEASE_ID}"
+fi
 
 "${SSH[@]}" "${REMOTE}" "sudo -n /usr/local/sbin/root-gateway-install-release '${RELEASE_ID}'"
 

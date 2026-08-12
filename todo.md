@@ -28,7 +28,7 @@
 - [x] Publish and verify the audited ROOT self-owned-auth staging release, preserving the no-tracking boundary.
 - [x] Deliver a concise security audit report with verified controls, remediations, remaining deployment limitations, and the active staging URL.
 - [x] Review and summarize the exact security-audit findings, severities, remediations, and remaining deployment conditions.
-- [ ] Inspect available server connections and prepare a self-owned ROOT production deployment with HTTPS, encrypted persistent storage, and no third-party identity retention.
+- [x] Inspect available server connections and prepare a self-owned ROOT production deployment with HTTPS, encrypted persistent storage, and no third-party identity retention.
 - [x] Compare current AWS Lightsail availability and fit for Singapore, Tokyo, Hong Kong, Frankfurt, and Oregon as ROOT production locations.
 - [x] Define a ROOT primary-region, encrypted backup, DNS/TLS, and recovery topology that preserves member privacy and minimizes avoidable cross-region data replication.
 - [x] Decide the production region and document the deployment sequence before provisioning the Lightsail instance.
@@ -44,10 +44,11 @@
 - [ ] Retire the private key pasted into chat from all authorized server locations and use the AWS default key only until a dedicated ROOT deploy-only public key is installed.
 - [x] Add the dedicated ROOT deploy-only public key to the rootapp administrator’s authorized keys, then remove routine dependency on the AWS default key.
 - [x] Verify that the DNS A record for root.nexinus.net resolves publicly to 34.223.165.42 before requesting Caddy certificate issuance.
-- [ ] Verify inbound ports 80 and 443, valid TLS issuance for root.nexinus.net, HTTPS redirection, and ROOT production security headers.
+- [x] Verify inbound ports 80 and 443, valid TLS issuance for root.nexinus.net, HTTPS redirection, and ROOT production security headers.
 - [x] Recheck root.nexinus.net DNS propagation after the submitted A-record update and confirm it resolves to the Oregon static IPv4 from an external resolver.
 - [x] Verify successful SSH authentication with the dedicated ROOT deploy key as rootdeploy before granting the controlled deployment privilege.
-- [ ] Verify the completed Oregon bootstrap produced the ROOT secret file, private data directory, systemd definition, Caddy configuration, and firewall prerequisites.
-- [ ] Upload and activate the audited ROOT release on root.nexinus.net using the dedicated deploy key.
-- [ ] Verify the production account lifecycle, TLS certificate, redirect, response headers, encrypted data format, origin rejection, and no-tracking resource boundary.
-- [ ] Install and verify a root-owned, narrowly authorized ROOT release activator so rootdeploy can activate vetted releases without general sudo access.
+- [x] Verify the completed Oregon bootstrap produced the ROOT secret file, private data directory, systemd definition, Caddy configuration, and firewall prerequisites.
+- [x] Upload and activate the audited ROOT release on root.nexinus.net using the dedicated deploy key.
+- [x] Verify the production account lifecycle, TLS certificate, redirect, response headers, encrypted data format, origin rejection, and no-tracking resource boundary.
+- [x] Install and verify a root-owned, narrowly authorized ROOT release activator so rootdeploy can activate vetted releases without general sudo access.
+- [x] Recheck the external TLS handshake on root.nexinus.net after the Lightsail 443 rule update, then complete the disposable account and origin-rejection acceptance tests.
