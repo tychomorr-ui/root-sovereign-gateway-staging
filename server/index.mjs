@@ -9,6 +9,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const dataFile = process.env.ROOT_AUTH_DATA_PATH || path.join(root, "data", "root-auth.json");
 const port = Number(process.env.PORT || 4174);
+const host = process.env.ROOT_BIND_HOST || "0.0.0.0";
 const sessionLifetimeMs = 1000 * 60 * 60 * 24 * 14;
 const authWindowMs = 1000 * 60 * 15;
 const maxAuthAttempts = 12;
@@ -188,4 +189,4 @@ const dist = path.join(root, "dist");
 app.use(express.static(dist, { index: "index.html", maxAge: "1h", etag: true }));
 app.use((request, response) => request.method === "GET" ? response.sendFile(path.join(dist, "index.html")) : response.status(404).json({ error: "Not found." }));
 
-app.listen(port, "0.0.0.0", () => console.log(`ROOT self-owned auth service listening on ${port}`));
+app.listen(port, host, () => console.log(`ROOT self-owned auth service listening on ${host}:${port}`));

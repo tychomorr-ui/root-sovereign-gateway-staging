@@ -63,6 +63,7 @@ User=rootapp
 Group=rootapp
 WorkingDirectory=/opt/root-gateway/current
 EnvironmentFile=/etc/root-gateway/root.env
+Environment=ROOT_BIND_HOST=127.0.0.1
 ExecStart=/usr/bin/node server/index.mjs
 Restart=on-failure
 RestartSec=5
