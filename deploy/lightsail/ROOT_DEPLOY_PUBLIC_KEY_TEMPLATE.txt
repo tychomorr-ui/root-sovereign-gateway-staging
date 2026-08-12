@@ -1,0 +1,5 @@
+# Dedicated ROOT deploy-only key for the Oregon Lightsail instance.
+# Fingerprint: SHA256:HsmzQfw4o+lVyDMlK/1GlyrngeE9rcnfS+S2MwZwnmQ
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEJ11WblnHTfkik8EmRAljsh+qyDZg5wBDdKR8MbYZrw root-gate-deploy-oregon-2026
+
+# Do not place the matching private key in this repository, in a server web root, or in chat.

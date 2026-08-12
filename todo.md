@@ -27,3 +27,23 @@
 - [x] Remediate verified audit findings and add regression tests for the affected security controls.
 - [x] Publish and verify the audited ROOT self-owned-auth staging release, preserving the no-tracking boundary.
 - [x] Deliver a concise security audit report with verified controls, remediations, remaining deployment limitations, and the active staging URL.
+- [x] Review and summarize the exact security-audit findings, severities, remediations, and remaining deployment conditions.
+- [ ] Inspect available server connections and prepare a self-owned ROOT production deployment with HTTPS, encrypted persistent storage, and no third-party identity retention.
+- [x] Compare current AWS Lightsail availability and fit for Singapore, Tokyo, Hong Kong, Frankfurt, and Oregon as ROOT production locations.
+- [x] Define a ROOT primary-region, encrypted backup, DNS/TLS, and recovery topology that preserves member privacy and minimizes avoidable cross-region data replication.
+- [x] Decide the production region and document the deployment sequence before provisioning the Lightsail instance.
+- [x] Write presentation content for the ROOT security audit and self-owned authentication implementation.
+- [x] Write presentation content for the complete ROOT product, governance, privacy, Project Reclaim, Truth Talk, federation, and release roadmap.
+- [x] Generate both presentation decks and attach the resulting slide artifacts.
+- [x] Provide a publication-readiness decision that distinguishes audited staging from durable production readiness.
+- [x] Write and validate an idempotent Oregon Lightsail bootstrap script for the ROOT Node service, Caddy HTTPS proxy, firewall, private data path, and rootapp service account.
+- [x] Write and validate a controlled ROOT release script that uploads the audited bundle, sets production configuration locally on the server, and restarts the service only after tests pass.
+- [x] Generate a dedicated ROOT deployment SSH key pair outside the repository and validate its public-key fingerprint and file permissions.
+- [x] Package the deployment scripts, public key, runbook, and audited release artifact without including the private key or account-store data.
+- [x] Record the ROOT-Gate Oregon Lightsail target as a running dual-stack instance with static IPv4 34.223.165.42 and temporary AWS-default-key bootstrap access.
+- [ ] Retire the private key pasted into chat from all authorized server locations and use the AWS default key only until a dedicated ROOT deploy-only public key is installed.
+- [x] Add the dedicated ROOT deploy-only public key to the rootapp administrator’s authorized keys, then remove routine dependency on the AWS default key.
+- [x] Verify that the DNS A record for root.nexinus.net resolves publicly to 34.223.165.42 before requesting Caddy certificate issuance.
+- [ ] Verify inbound ports 80 and 443, valid TLS issuance for root.nexinus.net, HTTPS redirection, and ROOT production security headers.
+- [x] Recheck root.nexinus.net DNS propagation after the submitted A-record update and confirm it resolves to the Oregon static IPv4 from an external resolver.
+- [x] Verify successful SSH authentication with the dedicated ROOT deploy key as rootdeploy before granting the controlled deployment privilege.
