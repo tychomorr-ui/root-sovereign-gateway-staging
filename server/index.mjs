@@ -4,6 +4,7 @@ import { mkdir, readFile, rename, writeFile, chmod } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
+import { normalizePathwayCreate, normalizePathwayStage, pathwayView } from "./pathway-core.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
@@ -14,7 +15,7 @@ const sessionLifetimeMs = 1000 * 60 * 60 * 24 * 14;
 const authWindowMs = 1000 * 60 * 15;
 const maxAuthAttempts = 12;
 const dataEncryptionKey = parseDataEncryptionKey(process.env.ROOT_AUTH_DATA_KEY);
-let data = { version: 1, accounts: [], sessions: [] };
+let data = { version: 2, accounts: [], sessions: [], pathways: [] };
 let writeQueue = Promise.resolve();
 const authAttempts = new Map();
 
@@ -26,6 +27,7 @@ async function loadData() {
     data = decryptStore(JSON.parse(await readFile(dataFile, "utf8")), dataEncryptionKey);
     data.accounts ||= [];
     data.sessions ||= [];
+    data.pathways ||= [];
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
     await persist();
@@ -70,6 +72,22 @@ function findSession(request) {
   if (!session) return null;
   const account = data.accounts.find(candidate => candidate.id === session.accountId);
   return account ? { token, session, account } : null;
+}
+
+function requireSession(request, response) {
+  const current = findSession(request);
+  if (!current) {
+    response.status(401).json({ error: "Open a ROOT session before changing a private pathway." });
+    return null;
+  }
+  return current;
+}
+
+function pathwaysFor(accountId) {
+  return data.pathways
+    .filter(item => item.accountId === accountId)
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .map(pathwayView);
 }
 
 function sameOrigin(request, response, next) {
@@ -179,10 +197,67 @@ app.delete("/api/auth/account", sameOrigin, async (request, response) => {
   await mutate(() => {
     data.accounts = data.accounts.filter(account => account.id !== current.account.id);
     data.sessions = data.sessions.filter(session => session.accountId !== current.account.id);
+    data.pathways = data.pathways.filter(item => item.accountId !== current.account.id);
   });
   response.set("Cache-Control", "no-store");
   response.set("Set-Cookie", cookieFor(request, "", 0));
   response.json({ ok: true });
+});
+
+app.get("/api/pathway", (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  response.set("Cache-Control", "no-store");
+  response.json({ items: pathwaysFor(current.account.id) });
+});
+
+app.post("/api/pathway", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizePathwayCreate(request.body);
+  if (input.error) return response.status(400).json(input);
+  const items = await mutate(() => {
+    const now = Date.now();
+    const existing = data.pathways.find(item => item.accountId === current.account.id && item.sourceId === input.sourceId);
+    if (existing) existing.updatedAt = now;
+    else data.pathways.push({ id: randomUUID(), accountId: current.account.id, sourceId: input.sourceId, stage: "saved", createdAt: now, updatedAt: now });
+    return pathwaysFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.status(201).json({ items });
+});
+
+app.patch("/api/pathway", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizePathwayStage(request.body);
+  if (input.error) return response.status(400).json(input);
+  try {
+    const items = await mutate(() => {
+      const item = data.pathways.find(candidate => candidate.accountId === current.account.id && candidate.sourceId === input.sourceId);
+      if (!item) throw new Error("Private pathway step not found.");
+      item.stage = input.stage;
+      item.updatedAt = Date.now();
+      return pathwaysFor(current.account.id);
+    });
+    response.set("Cache-Control", "no-store");
+    response.json({ items });
+  } catch {
+    response.status(404).json({ error: "ROOT could not update that private pathway step." });
+  }
+});
+
+app.delete("/api/pathway/:sourceId", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizePathwayCreate({ sourceId: request.params.sourceId });
+  if (input.error) return response.status(400).json(input);
+  const items = await mutate(() => {
+    data.pathways = data.pathways.filter(item => !(item.accountId === current.account.id && item.sourceId === input.sourceId));
+    return pathwaysFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.json({ items });
 });
 
 const dist = path.join(root, "dist");

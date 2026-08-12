@@ -2,8 +2,10 @@ import { describe, expect, it } from "vitest";
 import { canNotifySourceFromIssue, canPublishLake, canSeePathway, publicSources } from "./policy";
 
 describe("ROOT clean policy", () => {
-  it("publishes only reviewed Mendocino sources", () => {
-    expect(publicSources().map(source => source.id)).toEqual(["mendo-housing", "mendo-work"]);
+  it("publishes only reviewed Mendocino sources with member-facing action boundaries", () => {
+    const catalog = publicSources();
+    expect(catalog).toHaveLength(9);
+    expect(catalog.every(source => source.county === "mendocino" && source.state === "published" && source.action && source.verifiedAt && source.sourceKind)).toBe(true);
   });
 
   it("keeps Lake County unpublished under the present authority", () => {
