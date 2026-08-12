@@ -1,4 +1,4 @@
-import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 
 const scrypt = promisify(scryptCallback);
@@ -31,4 +31,27 @@ export function issueOpaqueToken() {
 
 export function fingerprintToken(token) {
   return createHash("sha256").update(token).digest("hex");
+}
+
+export function parseDataEncryptionKey(value) {
+  if (!value) return null;
+  const key = Buffer.from(value, "base64");
+  if (key.length !== 32) throw new Error("ROOT_AUTH_DATA_KEY must decode to exactly 32 bytes.");
+  return key;
+}
+
+export function encryptStore(store, key) {
+  if (!key) return store;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const ciphertext = Buffer.concat([cipher.update(JSON.stringify(store), "utf8"), cipher.final()]);
+  return { format: "root-auth-aes-256-gcm-v1", iv: iv.toString("base64"), tag: cipher.getAuthTag().toString("base64"), ciphertext: ciphertext.toString("base64") };
+}
+
+export function decryptStore(stored, key) {
+  if (!stored?.format) return stored;
+  if (stored.format !== "root-auth-aes-256-gcm-v1" || !key) throw new Error("ROOT cannot read the protected account store without its configured data key.");
+  const decipher = createDecipheriv("aes-256-gcm", key, Buffer.from(stored.iv, "base64"));
+  decipher.setAuthTag(Buffer.from(stored.tag, "base64"));
+  return JSON.parse(Buffer.concat([decipher.update(Buffer.from(stored.ciphertext, "base64")), decipher.final()]).toString("utf8"));
 }

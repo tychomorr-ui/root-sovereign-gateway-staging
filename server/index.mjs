@@ -3,20 +3,26 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile, chmod } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, validateCredentials, verifyPassword } from "./auth-core.mjs";
+import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const dataFile = process.env.ROOT_AUTH_DATA_PATH || path.join(root, "data", "root-auth.json");
 const port = Number(process.env.PORT || 4174);
 const sessionLifetimeMs = 1000 * 60 * 60 * 24 * 14;
+const authWindowMs = 1000 * 60 * 15;
+const maxAuthAttempts = 12;
+const dataEncryptionKey = parseDataEncryptionKey(process.env.ROOT_AUTH_DATA_KEY);
 let data = { version: 1, accounts: [], sessions: [] };
 let writeQueue = Promise.resolve();
+const authAttempts = new Map();
+
+if (process.env.NODE_ENV === "production" && !dataEncryptionKey) throw new Error("ROOT_AUTH_DATA_KEY is required when the ROOT account service runs in production.");
 
 async function loadData() {
   await mkdir(path.dirname(dataFile), { recursive: true, mode: 0o700 });
   try {
-    data = JSON.parse(await readFile(dataFile, "utf8"));
+    data = decryptStore(JSON.parse(await readFile(dataFile, "utf8")), dataEncryptionKey);
     data.accounts ||= [];
     data.sessions ||= [];
   } catch (error) {
@@ -28,7 +34,7 @@ async function loadData() {
 
 function persist() {
   const temporary = `${dataFile}.tmp`;
-  return writeFile(temporary, JSON.stringify(data), { encoding: "utf8", mode: 0o600 })
+  return writeFile(temporary, JSON.stringify(encryptStore(data, dataEncryptionKey)), { encoding: "utf8", mode: 0o600 })
     .then(() => rename(temporary, dataFile))
     .then(() => chmod(dataFile, 0o600));
 }
@@ -74,6 +80,20 @@ function sameOrigin(request, response, next) {
   return response.status(403).json({ error: "ROOT accepts state-changing requests only from the same origin." });
 }
 
+function rateLimitAuthentication(request, response, next) {
+  const now = Date.now();
+  for (const [key, record] of authAttempts) if (record.resetAt <= now) authAttempts.delete(key);
+  const key = `${request.ip}:${request.path}`;
+  const record = authAttempts.get(key) || { count: 0, resetAt: now + authWindowMs };
+  if (record.count >= maxAuthAttempts) {
+    response.set("Retry-After", String(Math.ceil((record.resetAt - now) / 1000)));
+    return response.status(429).json({ error: "Too many account attempts. Try again after the indicated wait." });
+  }
+  record.count += 1;
+  authAttempts.set(key, record);
+  return next();
+}
+
 function createSession(accountId) {
   const token = issueOpaqueToken();
   const session = { id: randomUUID(), accountId, tokenHash: fingerprintToken(token), expiresAt: Date.now() + sessionLifetimeMs, createdAt: Date.now() };
@@ -85,6 +105,19 @@ const app = express();
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
 app.use(express.json({ limit: "8kb" }));
+app.use((request, response, next) => {
+  response.set({
+    "Content-Security-Policy": "default-src 'self'; base-uri 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'",
+    "Cross-Origin-Opener-Policy": "same-origin",
+    "Cross-Origin-Resource-Policy": "same-origin",
+    "Permissions-Policy": "camera=(), geolocation=(), microphone=(), payment=(), usb=()",
+    "Referrer-Policy": "no-referrer",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+  });
+  if (request.secure || process.env.NODE_ENV === "production") response.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+  next();
+});
 
 app.get("/api/auth/me", (request, response) => {
   const current = findSession(request);
@@ -92,7 +125,7 @@ app.get("/api/auth/me", (request, response) => {
   response.json({ user: current ? accountView(current.account) : null });
 });
 
-app.post("/api/auth/register", sameOrigin, async (request, response) => {
+app.post("/api/auth/register", sameOrigin, rateLimitAuthentication, async (request, response) => {
   const handle = normalizeHandle(request.body?.handle);
   const password = request.body?.password;
   const error = validateCredentials(handle, password);
@@ -110,12 +143,12 @@ app.post("/api/auth/register", sameOrigin, async (request, response) => {
     response.set("Cache-Control", "no-store");
     response.set("Set-Cookie", cookieFor(request, token, Math.floor(sessionLifetimeMs / 1000)));
     return response.status(201).json({ user: accountView(account) });
-  } catch (registrationError) {
-    return response.status(409).json({ error: registrationError.message || "The account could not be created." });
+  } catch {
+    return response.status(409).json({ error: "That local ROOT account cannot be created." });
   }
 });
 
-app.post("/api/auth/login", sameOrigin, async (request, response) => {
+app.post("/api/auth/login", sameOrigin, rateLimitAuthentication, async (request, response) => {
   const handle = normalizeHandle(request.body?.handle);
   const password = request.body?.password;
   const account = data.accounts.find(candidate => candidate.handle === handle);

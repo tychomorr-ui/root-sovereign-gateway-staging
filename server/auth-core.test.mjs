@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, validateCredentials, verifyPassword } from "./auth-core.mjs";
+import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
 
 describe("ROOT self-owned authentication core", () => {
   it("normalizes a ROOT handle and rejects invalid local identifiers", () => {
@@ -20,5 +20,13 @@ describe("ROOT self-owned authentication core", () => {
     const fingerprint = fingerprintToken(token);
     expect(token).not.toBe(fingerprint);
     expect(fingerprint).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it("encrypts a persistent account store with an installation-controlled key", () => {
+    const key = parseDataEncryptionKey(Buffer.alloc(32, 7).toString("base64"));
+    const protectedStore = encryptStore({ accounts: [{ handle: "root-owner" }], sessions: [] }, key);
+    expect(JSON.stringify(protectedStore)).not.toContain("root-owner");
+    expect(decryptStore(protectedStore, key)).toEqual({ accounts: [{ handle: "root-owner" }], sessions: [] });
+    expect(() => parseDataEncryptionKey("not-a-32-byte-key")).toThrow("32 bytes");
   });
 });

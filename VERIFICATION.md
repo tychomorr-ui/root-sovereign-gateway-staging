@@ -16,6 +16,7 @@
 | Persistent-host investigation | The project’s Replit reference returns a not-found page, and the browser has no authenticated GitHub session to enable Pages. The public deployment repository and Pages workflow are retained for activation when repository Pages permission is available. |
 | Self-owned account visual check | The ROOT self-owned-auth service serves a local account screen that requests only a ROOT handle and password, explicitly rules out social login, email identity brokers, advertising identifiers, and tracking SDKs, and keeps public sources available without sign-in. |
 | Self-owned account resource check | Browser resource inspection on the self-owned-auth staging service returned only the ROOT staging origin; no third-party identity or tracking host was loaded. |
+| Audited production-mode staging check | The public staging route remains available after restart in production mode. The local account store is AES-256-GCM protected under an installation-controlled key; the server emits CSP, frame-denial, no-referrer, MIME, restrictive-permissions, cross-origin, and HSTS headers. |
 
 ## Release Boundary
 

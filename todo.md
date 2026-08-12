@@ -22,3 +22,8 @@
 - [x] Define and implement self-owned ROOT authentication using local credentials, password hashing, server-side sessions, and user-controlled account deletion without third-party identity providers.
 - [x] Keep authentication identifiers, session data, and private member records out of the static public staging build and eliminate all behavioral tracking.
 - [x] Publish and verify the updated ROOT release under a new active staging address.
+- [x] Audit password verification, session-cookie attributes, origin checks, account-deletion behavior, static-file boundaries, and response headers.
+- [x] Audit third-party resource exposure and run dependency vulnerability checks for the self-owned-auth release.
+- [x] Remediate verified audit findings and add regression tests for the affected security controls.
+- [x] Publish and verify the audited ROOT self-owned-auth staging release, preserving the no-tracking boundary.
+- [x] Deliver a concise security audit report with verified controls, remediations, remaining deployment limitations, and the active staging URL.
