@@ -68,3 +68,4 @@
 - [x] Confirm the host UFW status now lists only IPv4 and IPv6 allowances for 22, 80, and 443.
 - [x] Verify that the minimal UFW policy alone did not stop external 4174 reachability because the Node service remained bound to all IPv4 interfaces.
 - [x] Update the ROOT production systemd service to bind Node port 4174 to 127.0.0.1 only, redeploy through the approved activator, and verify external closure.
+- [x] Perform a strictly read-only status and configuration audit of Tesseract-Terminus, Tesseract-A, and Kether-Gate; document host-specific evidence and any credential or connectivity limitations without modifying any instance.
