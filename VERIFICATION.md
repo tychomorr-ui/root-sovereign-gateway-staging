@@ -11,6 +11,8 @@
 | Directory Steward visual check | The steward view permits only Mendocino source-issue review and visibly disables Lake County publication while listing excluded authority over the roster, Monarch nodes, and attestations. |
 | Control-surface visual check | The clean gateway now presents member permissions, proof ledger, Truth Talk, and service-access entry points using the same private-control framing as the live reference. |
 | Truth Talk visual check | The clean `/truth` surface presents claim type, declared sources, correction path, and non-binary TruthOK signals while explicitly separating public conversation from private member-pathway data. |
+| Independent staging check | The verified static ROOT build is live at the temporary staging URL on port 4173; its gateway page loads with the public control surface, regional-source boundaries, and link-only ecosystem handoffs. |
+| Tracking-resource check | Browser resource inspection on the temporary staging URL returned only the staging origin; no third-party tracking or advertising host was loaded. |
 
 ## Release Boundary
 

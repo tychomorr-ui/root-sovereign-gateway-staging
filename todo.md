@@ -16,5 +16,5 @@
 - [x] Package source, verification evidence, parity matrix, and managed full-stack implementation requirements into one deployment handoff.
 - [ ] Preserve the current live ROOT domain and require a managed full-stack staging workspace before any replacement publication.
 - [x] Prepare a static, privacy-preserving ROOT staging artifact that contains no member data, OAuth flow, or persistent private-pathway writes.
-- [ ] Publish the independent ROOT staging artifact under a new address without modifying the current live domain.
+- [x] Publish the independent ROOT staging artifact under a new address without modifying the current live domain.
 - [ ] Check the independent staging URL for route delivery, responsive rendering, and absence of third-party tracking requests.
