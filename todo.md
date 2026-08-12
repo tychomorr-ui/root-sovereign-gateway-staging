@@ -63,3 +63,5 @@
 - [ ] Apply the authorized 4174 closure in both the host firewall and Lightsail network firewall, then verify 22, 80, and 443 remain reachable.
 - [x] Confirm that the Lightsail edge firewall already permits only 22, 80, and 443, with no separate 4174 rule.
 - [ ] Update the ROOT host bootstrap to enforce a default-deny incoming policy and remove any host-level 4174 allowance before rerunning it under the AWS default administrator key.
+- [ ] Verify the completed default-deny host firewall blocks public 4174 while preserving 22, 80, 443, and the live ROOT HTTPS endpoint.
+- [ ] Replace the lingering host UFW rule set with an explicit minimal policy of SSH 22, HTTP 80, and HTTPS 443 only, then revalidate external reachability.
