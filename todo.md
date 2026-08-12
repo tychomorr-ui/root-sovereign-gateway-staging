@@ -18,3 +18,7 @@
 - [x] Prepare a static, privacy-preserving ROOT staging artifact that contains no member data, OAuth flow, or persistent private-pathway writes.
 - [x] Publish the independent ROOT staging artifact under a new address without modifying the current live domain.
 - [x] Check the independent staging URL for route delivery, responsive rendering, and absence of third-party tracking requests.
+- [x] Inspect current repository visibility, Pages configuration, and deployment permissions after the user unpublished the prior release.
+- [x] Define and implement self-owned ROOT authentication using local credentials, password hashing, server-side sessions, and user-controlled account deletion without third-party identity providers.
+- [x] Keep authentication identifiers, session data, and private member records out of the static public staging build and eliminate all behavioral tracking.
+- [x] Publish and verify the updated ROOT release under a new active staging address.
