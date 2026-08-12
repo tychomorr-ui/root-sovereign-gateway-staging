@@ -69,3 +69,4 @@
 - [x] Verify that the minimal UFW policy alone did not stop external 4174 reachability because the Node service remained bound to all IPv4 interfaces.
 - [x] Update the ROOT production systemd service to bind Node port 4174 to 127.0.0.1 only, redeploy through the approved activator, and verify external closure.
 - [x] Perform a strictly read-only status and configuration audit of Tesseract-Terminus, Tesseract-A, and Kether-Gate; document host-specific evidence and any credential or connectivity limitations without modifying any instance.
+- [ ] Define and obtain approval for a consent-controlled interoperability model linking ROOT with universaltruth.life, resonate-earth.live, and xinus.one before implementing any cross-application data exchange or node federation.
