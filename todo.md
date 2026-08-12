@@ -59,12 +59,12 @@
 - [ ] Attempt only read-only credential-based access checks for Tesseract-Terminus, Tesseract-A, and Kether-Gate; do not alter any instance.
 - [ ] Deliver a verified instance-by-instance contents and health report with clearly separated observations, unknowns, and corrective priorities.
 - [x] Confirm that ROOT-Gate’s internal Node port 4174 is externally reachable despite its intended Caddy-only architecture.
-- [ ] With explicit approval, close public ingress to port 4174 at the Lightsail and host firewalls while retaining public 80/443 and administrative 22 access.
-- [ ] Apply the authorized 4174 closure in both the host firewall and Lightsail network firewall, then verify 22, 80, and 443 remain reachable.
+- [x] With explicit approval, close public ingress to port 4174 at the Lightsail and host firewalls while retaining public 80/443 and administrative 22 access.
+- [x] Apply the authorized 4174 closure in both the host firewall and Lightsail network firewall, then verify 22, 80, and 443 remain reachable.
 - [x] Confirm that the Lightsail edge firewall already permits only 22, 80, and 443, with no separate 4174 rule.
-- [ ] Update the ROOT host bootstrap to enforce a default-deny incoming policy and remove any host-level 4174 allowance before rerunning it under the AWS default administrator key.
-- [ ] Verify the completed default-deny host firewall blocks public 4174 while preserving 22, 80, 443, and the live ROOT HTTPS endpoint.
-- [ ] Replace the lingering host UFW rule set with an explicit minimal policy of SSH 22, HTTP 80, and HTTPS 443 only, then revalidate external reachability.
+- [x] Update the ROOT host bootstrap to enforce a default-deny incoming policy and remove any host-level 4174 allowance before rerunning it under the AWS default administrator key.
+- [x] Verify the completed default-deny host firewall blocks public 4174 while preserving 22, 80, 443, and the live ROOT HTTPS endpoint.
+- [x] Replace the lingering host UFW rule set with an explicit minimal policy of SSH 22, HTTP 80, and HTTPS 443 only, then revalidate external reachability.
 - [x] Confirm the host UFW status now lists only IPv4 and IPv6 allowances for 22, 80, and 443.
 - [x] Verify that the minimal UFW policy alone did not stop external 4174 reachability because the Node service remained bound to all IPv4 interfaces.
-- [ ] Update the ROOT production systemd service to bind Node port 4174 to 127.0.0.1 only, redeploy through the approved activator, and verify external closure.
+- [x] Update the ROOT production systemd service to bind Node port 4174 to 127.0.0.1 only, redeploy through the approved activator, and verify external closure.

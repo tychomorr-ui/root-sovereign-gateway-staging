@@ -16,6 +16,10 @@ The audited ROOT self-owned-auth release was uploaded through the dedicated `roo
 | Data-store boundary | The deploy account could not read `/var/lib/root-gateway/root-auth.json`. |
 | Key custody | The production encryption key remained in the root-owned `/etc/root-gateway/root.env` configuration, outside the source tree and public routes. |
 | Release authority | `rootdeploy` can use only the root-owned release activator; it does not receive general sudo authority. |
+| Internal service binding | Release `20260812T044352Z-e98d738` is active, with Node listening only at `127.0.0.1:4174`. |
+| Direct IPv4 access | A direct request to `34.223.165.42:4174` timed out without a response. |
+| Direct IPv6 access | A direct request to `[2600:1f14:159c:7600:39e5:ec3d:dc2d:b7c9]:4174` failed to connect. |
+| Public gateway continuity | `https://root.nexinus.net/api/auth/me` returned HTTP 200 with the expected anonymous-session response and restrictive browser headers. |
 
 ## Self-Owned Authentication Acceptance
 
@@ -32,6 +36,10 @@ https://root.nexinus.net
 ```
 
 No third-party identity, analytics, advertising, or behavioral-tracking resource origin was observed.
+
+## Internal Port Closure Remediation
+
+On 2026-08-12 UTC, ROOT-Gate’s prior all-interface listener was remediated at the application boundary rather than by adding a redundant firewall exception. The production systemd unit now provides `ROOT_BIND_HOST=127.0.0.1`, and the Node service respects that setting. Remote listener inspection confirmed that `4174` is bound exclusively to `127.0.0.1`; Caddy continues to provide the public HTTPS entry point. Direct public probes over IPv4 and IPv6 did not reach the Node service, while the public HTTPS authentication endpoint remained healthy.
 
 ## Remaining Operational Requirement
 
