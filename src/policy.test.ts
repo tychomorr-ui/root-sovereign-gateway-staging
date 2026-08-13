@@ -2,16 +2,18 @@ import { describe, expect, it } from "vitest";
 import { canNotifySourceFromIssue, canPublishLake, canSeePathway, countyConfigurations, publicSources } from "./policy";
 
 describe("ROOT clean policy", () => {
-  it("publishes only reviewed Mendocino sources with member-facing action boundaries", () => {
+  it("publishes only reviewed authorized-county sources with member-facing action boundaries", () => {
     const catalog = publicSources();
-    expect(catalog).toHaveLength(9);
-    expect(catalog.every(source => source.county === "mendocino" && source.state === "published" && source.action && source.verifiedAt && source.sourceKind)).toBe(true);
+    expect(catalog).toHaveLength(14);
+    expect(catalog.every(source => (source.county === "mendocino" || source.county === "lake") && source.state === "published" && source.action && source.verifiedAt && source.sourceKind)).toBe(true);
+    expect(catalog.some(source => source.county === "mendocino")).toBe(true);
+    expect(catalog.some(source => source.county === "lake")).toBe(true);
   });
 
-  it("keeps Lake County unpublished under the present authority", () => {
+  it("allows the authorized Lake County regional scope while retaining First Executive publication control", () => {
     expect(canPublishLake("directory_steward")).toBe(false);
-    expect(canPublishLake("first_executive")).toBe(false);
-    expect(countyConfigurations.find(county => county.id === "lake")?.publicationState).toBe("watchlist");
+    expect(canPublishLake("first_executive")).toBe(true);
+    expect(countyConfigurations.find(county => county.id === "lake")?.publicationState).toBe("published");
   });
 
   it("keeps a pathway visible to its owner only", () => {

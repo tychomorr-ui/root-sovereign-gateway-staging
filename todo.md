@@ -85,3 +85,8 @@
 - [x] Publish a versioned public-only Project Reclaim resource pack for future Monarch OS nodes, while documenting that live mesh synchronization and cryptographic signing are not yet active.
 - [x] Replace the narrow Project Reclaim view with the initiative’s restoration, mitigation, workforce, training, materials, opportunity, and evidence model, using honest empty states for unverified operational records.
 - [x] Add tests confirming resource packs exclude private data and unpublished counties, then release and verify the Project Reclaim upgrade.
+- [ ] Research and publish only verified Lake County public resource pathways under the user’s newly authorized regional scope, with source review and no implied provider relationship.
+- [ ] Add empty, source-governed Project Reclaim registry schemas for projects, jobs, materials, partners, metrics, evidence, signatures, CIDs, and ledger references; do not invent operational records.
+- [ ] Add a public-only offline geospatial pack for verified regional boundaries and approved public resource points, excluding private addresses, member location, property records, and unverified operational map features.
+- [ ] Document how real Project Reclaim records will enter the registry through authorized verification, status, provenance, and publication decisions rather than automatic scraping or false claims.
+- [ ] Add tests, release, and live verification for the Lake County, registry, and offline-map foundation.

@@ -1,8 +1,8 @@
 {
   "schema": "root.project-reclaim.resource-pack.v0.1",
   "packState": "public-review-pack",
-  "issuedOn": "2026-08-12",
-  "purpose": "Offline-capable cache of approved public sources and Project Reclaim initiative structure for future Monarch OS nodes.",
+  "issuedOn": "2026-08-13",
+  "purpose": "Offline-capable cache of approved public sources, regional orientation data, and Project Reclaim initiative structure for future Monarch OS nodes.",
   "initiative": {
     "name": "Project Reclaim",
     "headline": "Restore the land. Recover the resource. Rebuild the community.",
@@ -12,7 +12,7 @@
   },
   "counties": [
     { "id": "mendocino", "label": "Mendocino County", "publicationState": "published", "scope": "Reviewed public pathways are available in ROOT." },
-    { "id": "lake", "label": "Lake County", "publicationState": "watchlist", "scope": "Not published in ROOT until separately authorized." }
+    { "id": "lake", "label": "Lake County", "publicationState": "published", "scope": "Reviewed public pathways are available in ROOT under the authorized regional scope." }
   ],
   "sources": [
     { "id": "mendo-housing", "county": "mendocino", "category": "Housing", "title": "Community Development Commission of Mendocino County", "url": "https://www.cdchousing.org/", "verifiedAt": "2026-08-12" },
@@ -23,22 +23,35 @@
     { "id": "mendo-211", "county": "mendocino", "category": "Navigation", "title": "211 Mendocino", "url": "https://211mendocino.org/", "verifiedAt": "2026-08-12" },
     { "id": "mendo-behavioral-access", "county": "mendocino", "category": "Support", "title": "Mendocino County Behavioral Health & Recovery Services", "url": "https://www.mendocinocounty.gov/departments/behavioral-health-and-recovery-services", "verifiedAt": "2026-08-12" },
     { "id": "mendo-warm-line", "county": "mendocino", "category": "Support", "title": "Mendocino County Warm Line", "url": "https://www.mendocinocounty.gov/departments/behavioral-health-and-recovery-services", "verifiedAt": "2026-08-12" },
-    { "id": "mendo-crisis", "county": "mendocino", "category": "Urgent support", "title": "Mendocino County 24/7 Crisis Line", "url": "https://www.mendocinocounty.gov/residents/health/mental-health", "verifiedAt": "2026-08-12" }
+    { "id": "mendo-crisis", "county": "mendocino", "category": "Urgent support", "title": "Mendocino County 24/7 Crisis Line", "url": "https://www.mendocinocounty.gov/residents/health/mental-health", "verifiedAt": "2026-08-12" },
+    { "id": "lake-housing", "county": "lake", "category": "Housing", "title": "Lake County MHSA Housing Program", "url": "https://www.lakecountyca.gov/1490/Housing", "verifiedAt": "2026-08-13" },
+    { "id": "lake-social-services", "county": "lake", "category": "Benefits", "title": "Lake County Social Services", "url": "https://www.lakecountyca.gov/715/Social-Services", "verifiedAt": "2026-08-13" },
+    { "id": "lake-211", "county": "lake", "category": "Navigation", "title": "211 Lake County", "url": "https://211lake.org/", "verifiedAt": "2026-08-13" },
+    { "id": "lake-behavioral-access", "county": "lake", "category": "Support", "title": "Lake County Behavioral Health Services", "url": "https://lcbh.lakecountyca.gov/173/Behavioral-Health-Services", "verifiedAt": "2026-08-13" },
+    { "id": "lake-crisis", "county": "lake", "category": "Urgent support", "title": "Lake County 24-Hour Emergency Crisis Line", "url": "https://lcbh.lakecountyca.gov/173/Behavioral-Health-Services", "verifiedAt": "2026-08-13" }
   ],
+  "offlineMap": {
+    "url": "/reclaim-regional-map-v0.1.geojson",
+    "scope": "Generalized Mendocino and Lake County public orientation boundaries only. Not a parcel, legal, site, evacuation, hazard, or private-location map."
+  },
   "records": {
     "projects": "data_unavailable",
     "opportunities": "data_unavailable",
     "jobs": "data_unavailable",
     "materials": "data_unavailable",
-    "partnerOrganizations": "data_unavailable",
-    "evidenceObjects": "data_unavailable"
+    "partners": "data_unavailable",
+    "metrics": "data_unavailable",
+    "evidence": "data_unavailable",
+    "signatures": "data_unavailable",
+    "cids": "data_unavailable",
+    "ledgerReferences": "data_unavailable"
   },
   "exclusions": [
     "ROOT accounts and sessions",
     "private member action plans and progress states",
     "member-provided addresses, property details, emergency context, or location",
     "provider records, applications, eligibility decisions, and case information",
-    "unpublished county watchlists",
+    "private or operational work sites, parcels, material locations, and private map features",
     "unverified projects, jobs, materials, partners, metrics, CIDs, signatures, or ledger claims"
   ],
   "meshStatus": "planned_not_active"

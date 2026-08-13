@@ -1,0 +1,16 @@
+{
+  "type": "FeatureCollection",
+  "name": "ROOT Project Reclaim regional orientation boundaries v0.1",
+  "metadata": {
+    "schema": "root.project-reclaim.regional-map.v0.1",
+    "purpose": "Offline orientation map for approved regional public resources. Generalized county boundaries only; no parcels, private addresses, member location, project sites, or operational features.",
+    "source": "California Department of Technology, California County Boundaries and Identifiers Feature Layer",
+    "sourceUrl": "https://services3.arcgis.com/uknczv4rpevve42E/arcgis/rest/services/California_County_Boundaries_and_Identifiers_Blue_Version_view/FeatureServer/1",
+    "retrievedOn": "2026-08-13",
+    "generalization": "Source geometry exported at EPSG:4326 with geometryPrecision=4 and maxAllowableOffset=0.02 for regional orientation only. Not a legal boundary or parcel map."
+  },
+  "features": [
+    {"type":"Feature","properties":{"countyId":"lake","label":"Lake County","geoid":"06033","publicationState":"published","resourceScope":"Reviewed public ROOT pathways"},"geometry":{"type":"Polygon","coordinates":[[[-122.7391,39.3835],[-122.7851,39.3833],[-122.7421,39.3646],[-122.7757,39.3147],[-122.7578,39.2852],[-122.6655,39.2177],[-122.5158,39.2084],[-122.4751,39.1703],[-122.4928,39.0541],[-122.4119,39.0193],[-122.4095,38.9637],[-122.3405,38.926],[-122.4229,38.903],[-122.3741,38.8113],[-122.4641,38.7061],[-122.6266,38.6709],[-122.8177,38.8606],[-122.9486,38.9011],[-122.9876,38.9975],[-123.0376,39.0065],[-123.0925,39.0712],[-123.0783,39.1736],[-122.9945,39.2349],[-123.0752,39.4074],[-123.0636,39.5041],[-122.8893,39.5304],[-122.8862,39.5802],[-122.7359,39.5806],[-122.7391,39.3835]]]}},
+    {"type":"Feature","properties":{"countyId":"mendocino","label":"Mendocino County","geoid":"06045","publicationState":"published","resourceScope":"Reviewed public ROOT pathways"},"geometry":{"type":"Polygon","coordinates":[[[-123.5445,40.002],[-123.5448,39.977],[-122.927,39.9713],[-122.91,39.9364],[-122.9513,39.9058],[-122.9601,39.8451],[-122.9382,39.7478],[-122.8941,39.7091],[-122.8893,39.5304],[-123.0636,39.5041],[-123.0752,39.4074],[-122.9945,39.2349],[-123.0783,39.1736],[-123.0941,39.08],[-123.0564,39.0208],[-122.9876,38.9975],[-122.9486,38.9011],[-122.8187,38.8515],[-123.0808,38.8523],[-123.1365,38.8395],[-123.136,38.8089],[-123.3684,38.8064],[-123.3683,38.7771],[-123.5204,38.7583],[-123.7277,38.9187],[-123.742,38.9559],[-123.6915,39.0512],[-123.8277,39.3493],[-123.7671,39.5596],[-123.7925,39.6844],[-123.8305,39.7232],[-123.8505,39.8306],[-124.0229,40.0014],[-123.5445,40.002]]]}}
+  ]
+}

@@ -28,7 +28,7 @@ export const needDescriptions: Record<Need, string> = {
 
 export const countyConfigurations: CountyConfiguration[] = [
   { id: "mendocino", label: "Mendocino County", publicationState: "published", scope: "Reviewed public pathways are available in ROOT." },
-  { id: "lake", label: "Lake County", publicationState: "watchlist", scope: "Verified watchlist only. It is not publicly available in ROOT or in a resource pack." },
+  { id: "lake", label: "Lake County", publicationState: "published", scope: "Reviewed public pathways are available in ROOT under the authorized regional scope." },
 ];
 
 export const sources: Source[] = [
@@ -78,6 +78,31 @@ export const sources: Source[] = [
     action: "If you are in immediate mental-health crisis, contact the official crisis line now; ROOT does not dispatch emergency services.", contact: "24/7 crisis line: 1-855-838-0404", verifiedAt: "2026-08-12", sourceKind: "Official county",
   },
   {
+    id: "lake-housing", county: "lake", state: "published", title: "Lake County MHSA Housing Program", category: "Housing",
+    url: "https://www.lakecountyca.gov/1490/Housing", note: "Official county information about the MHSA Housing Program for people with serious mental illness who are homeless or at risk of homelessness and meet program criteria.",
+    action: "Review the official housing information and decide whether its stated scope fits your situation; ROOT does not make a housing referral or eligibility decision.", verifiedAt: "2026-08-13", sourceKind: "Official county",
+  },
+  {
+    id: "lake-social-services", county: "lake", state: "published", title: "Lake County Social Services", category: "Benefits",
+    url: "https://www.lakecountyca.gov/715/Social-Services", note: "Official county entry point for cash assistance, CalFresh, medical-program information, employment services, and related social-service support.",
+    action: "Use the official county or BenefitsCal route if you decide to explore benefits. ROOT does not submit an application or retain application details.", contact: "707-995-4200 · toll-free 800-628-5288 · TTY 711", verifiedAt: "2026-08-13", sourceKind: "Official county",
+  },
+  {
+    id: "lake-211", county: "lake", state: "published", title: "211 Lake County", category: "Navigation",
+    url: "https://211lake.org/", note: "Local 211 directory covering housing, food, income, crisis, health, transportation, education, and other community-resource categories.",
+    action: "Search, call, or text the official 211 directory when you want local options across more than one need category.", contact: "Call 211 or 844-987-0586 · text ZIP code to 898-211", verifiedAt: "2026-08-13", sourceKind: "Official 211 directory",
+  },
+  {
+    id: "lake-behavioral-access", county: "lake", state: "published", title: "Lake County Behavioral Health Services", category: "Support",
+    url: "https://lcbh.lakecountyca.gov/173/Behavioral-Health-Services", note: "Official county behavioral-health information, including recovery-oriented services and a 24-hour member access line. ROOT does not provide clinical care.",
+    action: "Use the official county behavioral-health information if you choose to explore access or recovery services.", contact: "24-hour member access line: 888-541-4578", verifiedAt: "2026-08-13", sourceKind: "Official county",
+  },
+  {
+    id: "lake-crisis", county: "lake", state: "published", title: "Lake County 24-Hour Emergency Crisis Line", category: "Urgent support",
+    url: "https://lcbh.lakecountyca.gov/173/Behavioral-Health-Services", note: "Official county behavioral-health page lists this 24-hour emergency crisis line. In a life-threatening emergency, call 911.",
+    action: "For an immediate mental-health crisis, use the official crisis line now; ROOT does not dispatch emergency services.", contact: "24-hour crisis line: 800-900-2075", verifiedAt: "2026-08-13", sourceKind: "Official county",
+  },
+  {
     id: "lake-housing-watchlist", county: "lake", state: "watchlist", title: "Lake County Housing", category: "Housing",
     url: "https://www.lakecountyca.gov/1490/Housing", note: "Verified watchlist only. It is not a public ROOT pathway under the present county scope.",
     action: "Not publicly available in ROOT.", verifiedAt: "2026-08-12", sourceKind: "Official county",
@@ -89,7 +114,7 @@ export function publicSources() {
 }
 
 export function canPublishLake(role: "directory_steward" | "first_executive") {
-  return role === "first_executive" && false;
+  return role === "first_executive";
 }
 
 export function canSeePathway(requestingMemberId: string, ownerMemberId: string) {

@@ -1,0 +1,19 @@
+{
+  "schema": "root.project-reclaim.registry.v0.1",
+  "status": "foundation_only",
+  "publishedOn": "2026-08-13",
+  "notice": "This registry defines publication controls. It contains no verified operational records yet.",
+  "registries": {
+    "projects": [],
+    "opportunities": [],
+    "jobs": [],
+    "materials": [],
+    "partners": [],
+    "metrics": [],
+    "evidence": [],
+    "signatures": [],
+    "cids": [],
+    "ledgerReferences": []
+  },
+  "privacyBoundary": "Private member, property, address, location, application, provider, and emergency data is not included in this public registry."
+}

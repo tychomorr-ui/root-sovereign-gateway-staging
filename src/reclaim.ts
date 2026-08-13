@@ -1,6 +1,23 @@
 import { countyConfigurations, publicSources } from "./policy";
 
 export type ReclaimStatus = "in_development" | "planned" | "data_unavailable";
+export type RegistryKind = "projects" | "opportunities" | "jobs" | "materials" | "partners" | "metrics" | "evidence" | "signatures" | "cids" | "ledgerReferences";
+export type RegistryDescriptor = { kind: RegistryKind; label: string; purpose: string; requiredForPublication: string[] };
+
+export const registryDescriptors: RegistryDescriptor[] = [
+  { kind: "projects", label: "Projects", purpose: "Real restoration, mitigation, training, recovery, infrastructure, or community work with a declared scope and status.", requiredForPublication: ["County scope", "authorized source", "status", "public summary", "publication decision"] },
+  { kind: "opportunities", label: "Opportunities", purpose: "Verified ways to participate through work, training, contracts, volunteering, resources, or community needs.", requiredForPublication: ["Source organization", "status", "application or contact route", "review date"] },
+  { kind: "jobs", label: "Jobs", purpose: "Verified roles, contracts, seasonal work, apprenticeships, internships, or volunteer opportunities.", requiredForPublication: ["Organization", "role status", "location or service area", "application method", "verification date"] },
+  { kind: "materials", label: "Materials", purpose: "Real recovered wood, biomass, equipment, or reusable resources with an authorized publication scope.", requiredForPublication: ["Material category", "custody or source", "availability status", "review decision"] },
+  { kind: "partners", label: "Partners", purpose: "Organizations with an explicit documented relationship to a Project Reclaim record.", requiredForPublication: ["Written authorization", "relationship scope", "review date"] },
+  { kind: "metrics", label: "Metrics", purpose: "Defined measurements of actual work, capacity, training, material recovery, or community outcomes.", requiredForPublication: ["Metric definition", "source method", "time period", "reviewer"] },
+  { kind: "evidence", label: "Evidence objects", purpose: "Documents, images, or records linked to a real event and a publication decision.", requiredForPublication: ["Evidence type", "source", "capture time", "access classification"] },
+  { kind: "signatures", label: "Signatures", purpose: "Future cryptographic attestations only after actual signing and key verification occur.", requiredForPublication: ["Key identifier", "algorithm", "signed payload reference", "verification result"] },
+  { kind: "cids", label: "CIDs", purpose: "Future content-addressed references only after content is actually addressed and retrievable.", requiredForPublication: ["Content hash", "storage proof", "retrieval verification"] },
+  { kind: "ledgerReferences", label: "Ledger references", purpose: "Future immutable-record references only after a ledger event is actually confirmed.", requiredForPublication: ["Ledger system", "event reference", "confirmation evidence"] },
+];
+
+export const emptyRegistry = Object.fromEntries(registryDescriptors.map(descriptor => [descriptor.kind, []])) as Record<RegistryKind, []>;
 
 export const reclaimInitiative = {
   name: "Project Reclaim",
@@ -35,13 +52,9 @@ export function createPublicReclaimResourcePack() {
     counties: countyConfigurations.map(county => ({ id: county.id, label: county.label, publicationState: county.publicationState, scope: county.scope })),
     sources: publicSources().map(source => ({ id: source.id, county: source.county, category: source.category, title: source.title, url: source.url, action: source.action, contact: source.contact, verifiedAt: source.verifiedAt, sourceKind: source.sourceKind })),
     records: {
-      projects: "data_unavailable",
-      opportunities: "data_unavailable",
-      jobs: "data_unavailable",
-      materials: "data_unavailable",
-      partnerOrganizations: "data_unavailable",
-      evidenceObjects: "data_unavailable",
+      ...Object.fromEntries(registryDescriptors.map(descriptor => [descriptor.kind, "data_unavailable"])),
     },
+    offlineMap: { schema: "root.project-reclaim.regional-map.v0.1", url: "/reclaim-regional-map-v0.1.geojson", status: "public_orientation_boundaries_only" },
     exclusions: [
       "ROOT accounts and sessions",
       "private member action plans and progress states",
