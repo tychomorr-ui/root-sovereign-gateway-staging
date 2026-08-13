@@ -8,6 +8,10 @@ describe("Project Reclaim CMAP alignment", () => {
     expect(cmapAlignment.registryProof.cid).toBe("not_issued_until_actual_content_addressing");
     expect(cmapAlignment.registryProof.signature).toBe("not_issued_until_actual_ed25519_signing");
     expect(cmapAlignment.registryProof.ledger).toBe("not_issued_until_actual_ledger_confirmation");
+    expect(cmapAlignment.verificationControls.defaultState).toBe("unverified_fail_closed");
+    expect(cmapAlignment.verificationControls.signatureInput).toBe("raw_response_bytes_before_json_parse");
+    expect(cmapAlignment.verificationControls.freshnessTtlSecondsMaximum).toBe(120);
+    expect(cmapAlignment.verificationControls.futureSkewSecondsMaximum).toBe(30);
   });
 
   it("requires quarantine and excludes member, provider, emergency, and private-location data", () => {
@@ -15,6 +19,7 @@ describe("Project Reclaim CMAP alignment", () => {
     expect(cmapAlignment.excluded.join(" ")).toContain("member action plans");
     expect(cmapAlignment.excluded.join(" ")).toContain("emergency context");
     expect(cmapAlignment.excluded.join(" ")).toContain("worksite coordinates");
+    expect(cmapAlignment.excluded.join(" ")).toContain("activation-package private keys");
     expect(cmapAlignment.publicOperationalRecords).toHaveLength(0);
   });
 });

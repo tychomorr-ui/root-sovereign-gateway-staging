@@ -23,6 +23,16 @@ The published pages call the protocol **Cosmic Mesh Alignment Protocol**, while 
 
 ROOT’s public CMAP alignment manifest is available at `/project-reclaim-cmap-manifest-v0.1.json`. It intentionally advertises **zero enrolled peers** and **zero public operational records**. This is an accurate declaration, not a missing feature claim.
 
+## Activation Package Review
+
+The supplied Nebulous Mesh activation package contains Markdown runbooks, configuration artifacts, private-key-named files, WireGuard profiles, bootstrap scripts, and health-dashboard scripts. ROOT inspected only the package documentation; no artifact was extracted for use, no script was executed, no key was read, and no node was activated.
+
+The runbooks describe a WireGuard exit-node deployment, public port `8080` health endpoint, tunnel configuration, and health checks. They are operational material, not evidence that a CMAP peer is enrolled or that a Project Reclaim record is trustworthy. ROOT will not expose an unsigned public health endpoint as the authority for a registry claim. The published CMAP repository instead specifies a live TLS status response whose raw bytes are signed and verified before JSON is trusted.[4] [5]
+
+ROOT adopts the following reference-only controls from the published CMAP material: default to `UNVERIFIED`; verify Ed25519 signatures over raw response bytes before parsing; apply strict deterministic canonicalization; enforce a maximum 120-second freshness window and 30-second future-skew limit; keep the signed counter opaque until verification; and evaluate counter monotonicity only after verification.[4] [5]
+
+The package’s private-key-named files, generated WireGuard profiles, bootstrap scripts, and health-dashboard output are excluded from ROOT’s manifest, repository, and public packs. Future actual enrollment must use node-generated keys under a separately authorized key-custody procedure. No uploaded or pre-generated private key is a ROOT enrollment credential.
+
 ## Record Construction When Real Evidence Exists
 
 For a real material-recovery listing, partner entry, or future project record, the public payload should contain only the approved public record fields. The private or operational source materials must remain outside the payload unless the source specifically authorizes publication.
@@ -60,3 +70,5 @@ The first approach is the appropriate present boundary because no actual Project
 [1]: https://universaltruth.life/gateway "Gateway Registry · Nexinus Terminus"
 [2]: https://universaltruth.life/mesh "Nebulous Mesh · Sovereign Internet Overlay"
 [3]: /home/ubuntu/upload/pasted_content.txt "Project Reclaim — Manus Master Initialization & Architecture Directive"
+[4]: https://github.com/tychomorr-ui/cosmic-net/blob/main/docs/Architecture.md "NEXINUS cMAP Architecture"
+[5]: https://github.com/tychomorr-ui/cosmic-net/blob/main/docs/SecurityModel.md "NEXINUS cMAP Security Model"

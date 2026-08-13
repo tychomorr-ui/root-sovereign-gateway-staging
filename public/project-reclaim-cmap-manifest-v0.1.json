@@ -29,6 +29,15 @@
     "signature": "not_issued_until_actual_ed25519_signing",
     "ledger": "not_issued_until_actual_ledger_confirmation"
   },
+  "verificationControls": {
+    "defaultState": "unverified_fail_closed",
+    "signatureInput": "raw_response_bytes_before_json_parse",
+    "canonicalization": "strict_deterministic_key_order_no_nonfinite_numbers_no_silent_coercion",
+    "freshnessTtlSecondsMaximum": 120,
+    "futureSkewSecondsMaximum": 30,
+    "counter": "opaque_until_verified_then_monotonicity_checked",
+    "keyHandling": "node_generated_private_keys_never_uploaded_or_committed_public_keys_pinned_after_authorized_enrollment"
+  },
   "synchronization": {
     "status": "planned_not_active",
     "allowedDataClass": "approved_public_only",
@@ -39,7 +48,8 @@
     "ROOT accounts, sessions, passwords, member action plans, and progress states",
     "provider records, applications, eligibility decisions, case information, and emergency context",
     "private addresses, properties, locations, worksites, material yards, and device telemetry",
-    "unverified operational records or invented signatures, CIDs, and ledger references"
+    "unverified operational records or invented signatures, CIDs, and ledger references",
+    "activation-package private keys, WireGuard profiles, bootstrap scripts, and untrusted health-dashboard output"
   ],
   "enrolledPeers": [],
   "publicOperationalRecords": []

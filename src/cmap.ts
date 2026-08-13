@@ -20,6 +20,15 @@ export const cmapAlignment = {
     signature: "not_issued_until_actual_ed25519_signing",
     ledger: "not_issued_until_actual_ledger_confirmation",
   },
+  verificationControls: {
+    defaultState: "unverified_fail_closed",
+    signatureInput: "raw_response_bytes_before_json_parse",
+    canonicalization: "strict_deterministic_key_order_no_nonfinite_numbers_no_silent_coercion",
+    freshnessTtlSecondsMaximum: 120,
+    futureSkewSecondsMaximum: 30,
+    counter: "opaque_until_verified_then_monotonicity_checked",
+    keyHandling: "node_generated_private_keys_never_uploaded_or_committed_public_keys_pinned_after_authorized_enrollment",
+  },
   syncPolicy: [
     "Only approved public manifests, public resource packs, public generalized map geometry, and public registry metadata may be offered to a peer.",
     "A receiving node re-derives the CID from a received public payload before considering it for review.",
@@ -31,6 +40,7 @@ export const cmapAlignment = {
     "provider records, applications, eligibility decisions, case information, or emergency context",
     "private addresses, property details, member/device location, worksite coordinates, or material-yard locations",
     "unverified operational records, projected outcomes, fabricated CIDs, signatures, or ledger references",
+    "activation-package private keys, WireGuard profiles, bootstrap scripts, and untrusted health-dashboard output",
   ],
   enrolledPeers: [] as string[],
   publicOperationalRecords: [] as string[],
