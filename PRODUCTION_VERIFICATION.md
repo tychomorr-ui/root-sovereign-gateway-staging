@@ -65,6 +65,12 @@ The release also publishes `/project-reclaim-registry-v0.1.json`, a ten-registry
 
 Production verification confirmed the Lake County filter, public registry link, service-worker registration marker, two-county and fourteen-source resource pack, two-feature generalized map pack, empty ten-registry response, HTTPS anonymous-session endpoint, and localhost-only `127.0.0.1:4174` listener. The release passed 15 automated tests locally and again on ROOT-Gate, followed by a successful production build.
 
+## CMAP Reference Alignment Release
+
+Release `20260813T010230Z-8e17308` adds a public CMAP reference alignment manifest at `/project-reclaim-cmap-manifest-v0.1.json` and a Project Reclaim interface link. The manifest references the published `ARCHANGEL/v0` handshake and its challenge, authorized Ed25519 signature, allow-list verification, X25519/WireGuard peer-binding, CID re-derivation, and quarantine-first concepts without claiming ROOT has performed any of those operations.
+
+Live verification confirmed the CMAP surface and manifest link in the deployed bundle. The live manifest reports `reference_only_not_enrolled`, `planned_not_active` synchronization, zero enrolled peers, zero public operational records, and `quarantine_pending_human_review` for future inbound material. No Project Reclaim CID, signature, ledger reference, node enrollment, or peer synchronization was fabricated or activated. The release passed 17 automated tests locally and again on ROOT-Gate, followed by a successful production build.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.

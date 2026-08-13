@@ -90,8 +90,8 @@
 - [x] Add a public-only offline geospatial pack for verified regional boundaries and approved public resource points, excluding private addresses, member location, property records, and unverified operational map features.
 - [x] Document how real Project Reclaim records will enter the registry through authorized verification, status, provenance, and publication decisions rather than automatic scraping or false claims.
 - [x] Add tests, release, and live verification for the Lake County, registry, and offline-map foundation.
-- [ ] Review the CMAP protocol reference at universaltruth.life and document the exact signature, CID, peer, and synchronization requirements that ROOT can safely adopt.
+- [x] Review the CMAP protocol reference at universaltruth.life and document the exact signature, CID, peer, and synchronization requirements that ROOT can safely adopt.
 - [ ] Verify the organization, material source or custody, county scope, status, authorization, and publication permission for any first Lake or Mendocino Project Reclaim material-recovery listing or partner entry; do not create a real operational record until verified.
-- [ ] Add a CMAP-aligned public registry-manifest model that contains only approved public record metadata and excludes member, provider, emergency, property, and private operational data.
+- [x] Add a CMAP-aligned public registry-manifest model that contains only approved public record metadata and excludes member, provider, emergency, property, and private operational data.
 - [ ] Implement, test, and release any verified first operational records and CMAP-compatible public manifest changes only after the evidence review is complete.
-- [ ] Publish a public CMAP alignment manifest that references the ARCHANGEL/v0 enrollment and quarantine controls, declares no enrolled ROOT peer or active CID/signature/ledger state, and exposes no private registry data.
+- [x] Publish a public CMAP alignment manifest that references the ARCHANGEL/v0 enrollment and quarantine controls, declares no enrolled ROOT peer or active CID/signature/ledger state, and exposes no private registry data.
