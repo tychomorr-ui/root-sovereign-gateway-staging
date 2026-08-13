@@ -104,10 +104,10 @@
 - [x] Define an explicitly non-live canonical Project Reclaim record template for future CID, Ed25519 signature, verification, and ledger-reference fields without fabricating proof values.
 - [x] Research radio-mesh transport constraints and draft a phased Monarch OS deployment plan for public-only Project Reclaim pack exchange in Mendocino and Lake Counties.
 - [x] Deliver a grounded next-level field-capable ROOT, Project Reclaim, CMAP, and Monarch OS operating blueprint that separates live capabilities, prototypes, and hardware-validated deployment stages.
-- [ ] Deliver a ROOT-centered compound upgrade for self-owned identity, consent, attestations, proof receipts, scoped sharing, correction and revocation, Truth Talk provenance, and member action without reframing ROOT as Project Reclaim.
-- [ ] Audit and document the live ROOT identity, consent, proof, vouch, and Truth Talk capability gaps before implementing the compound release.
-- [ ] Implement, test, release, and verify the highest-leverage member-sovereignty upgrades while retaining Project Reclaim as a bounded optional module.
-- [ ] Add encrypted member-owned account-control receipts, private attestations, consent receipts with revocation, and private proof/claim drafts that do not create public posts or external sharing.
-- [ ] Add deterministic SHA-256 integrity receipts, correction chains, withdrawal, and member-only JSON export for private proof records without claiming a CID, external ledger, or verified real-world identity.
-- [ ] Upgrade Member Space, Proof Ledger, and Truth Talk UI copy and controls so ROOT’s core purpose is self-owned existence, consent, proof, and correction—not directory navigation or Project Reclaim.
-- [ ] Add unit and end-to-end coverage for private record ownership, integrity receipts, correction/revocation, export, and account deletion, then release and verify the ROOT core upgrade.
+- [x] Deliver a ROOT-centered compound upgrade for self-owned identity, consent, attestations, proof receipts, scoped sharing, correction and revocation, Truth Talk provenance, and member action without reframing ROOT as Project Reclaim.
+- [x] Audit and document the live ROOT identity, consent, proof, vouch, and Truth Talk capability gaps before implementing the compound release.
+- [x] Implement, test, release, and verify the highest-leverage member-sovereignty upgrades while retaining Project Reclaim as a bounded optional module.
+- [x] Add encrypted member-owned account-control receipts, private attestations, consent receipts with revocation, and private proof/claim drafts that do not create public posts or external sharing.
+- [x] Add deterministic SHA-256 integrity receipts, correction chains, withdrawal, and member-only JSON export for private proof records without claiming a CID, external ledger, or verified real-world identity.
+- [x] Upgrade Member Space, Proof Ledger, and Truth Talk UI copy and controls so ROOT’s core purpose is self-owned existence, consent, proof, and correction—not directory navigation or Project Reclaim.
+- [x] Add unit and end-to-end coverage for private record ownership, integrity receipts, correction/revocation, export, and account deletion, then release and verify the ROOT core upgrade.

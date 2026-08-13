@@ -83,6 +83,14 @@ Release `20260813T013239Z-0dd522e` publishes two initial Project Reclaim foundat
 
 No EIN, private contact information, member data, operational location, material-yard location, worksite, CID, cryptographic signature, or ledger reference appears in the public registry or resource pack. Live verification confirmed exactly one partner-registry entry and one materials-registry entry; projects, jobs, signatures, CIDs, and ledger references remain empty. The public resource pack mirrors those two foundation records and retains `data_unavailable` for projects and cryptographic proof records. The release passed 18 automated tests locally and again on ROOT-Gate, followed by a successful production build.
 
+## ROOT Sovereign-Record Compound Release
+
+Release `20260813T024641Z-90cbc16` re-centers ROOT on the member’s self-owned account, consent, proof, correction, revocation, and controlled private record. New ROOT accounts receive a private account-control receipt that documents self-chosen handle/password registration only; it does not claim legal, biometric, governmental, or real-world identity verification.
+
+Authenticated members can now create private attestations, narrow internal-storage consent receipts, and private source-declared Truth Talk claim drafts. These records stay in the encrypted ROOT account store and are never published or sent to a provider by the feature. Each receipt has a deterministic SHA-256 integrity digest over declared record facts. Members can correct an active private attestation or claim through a separate private correction record, withdraw active private records, revoke active internal consent receipts, export only their own private record view as JSON, or delete their account together with its sessions, action plan, and private ledger records.
+
+The release adds unit coverage for canonical integrity receipts, private claim/consent validation, and state changes, as well as an isolated encrypted-service integration test for ownership denial, correction, consent revocation, export, and account deletion. Production verification created and deleted a disposable account, confirmed its initial account-control receipt, created a private attestation, revoked consent, corrected a private claim, exported the account record view, and confirmed post-deletion access denial. The release passed 23 automated tests locally and again on ROOT-Gate, followed by a successful production build. Public HTTPS health and the loopback-only `127.0.0.1:4174` listener were also confirmed.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
