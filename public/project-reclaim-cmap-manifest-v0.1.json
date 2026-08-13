@@ -1,0 +1,46 @@
+{
+  "schema": "root.project-reclaim.cmap-alignment.v0.1",
+  "state": "reference_only_not_enrolled",
+  "issuedOn": "2026-08-13",
+  "protocolReference": {
+    "label": "cMAP / ARCHANGEL reference alignment",
+    "publishedProtocolName": "Cosmic Mesh Alignment Protocol",
+    "handshake": "ARCHANGEL/v0",
+    "gateway": "https://universaltruth.life/gateway",
+    "mesh": "https://universaltruth.life/mesh"
+  },
+  "publicArtifacts": [
+    "/project-reclaim-resource-pack-v0.1.json",
+    "/project-reclaim-registry-v0.1.json",
+    "/reclaim-regional-map-v0.1.geojson"
+  ],
+  "peerAdmission": {
+    "status": "not_active",
+    "requirements": [
+      "Fresh peer challenge nonce",
+      "Authorized Ed25519 signature over the canonical ARCHANGEL/v0 message",
+      "Peer allow-list verification before X25519/WireGuard binding",
+      "Separate operator approval and public-scope review"
+    ]
+  },
+  "proofState": {
+    "canonicalSerialization": "required_before_hash_or_signature",
+    "cid": "not_issued_until_actual_content_addressing",
+    "signature": "not_issued_until_actual_ed25519_signing",
+    "ledger": "not_issued_until_actual_ledger_confirmation"
+  },
+  "synchronization": {
+    "status": "planned_not_active",
+    "allowedDataClass": "approved_public_only",
+    "inboundState": "quarantine_pending_human_review",
+    "cidVerification": "rederive_before_review"
+  },
+  "exclusions": [
+    "ROOT accounts, sessions, passwords, member action plans, and progress states",
+    "provider records, applications, eligibility decisions, case information, and emergency context",
+    "private addresses, properties, locations, worksites, material yards, and device telemetry",
+    "unverified operational records or invented signatures, CIDs, and ledger references"
+  ],
+  "enrolledPeers": [],
+  "publicOperationalRecords": []
+}
