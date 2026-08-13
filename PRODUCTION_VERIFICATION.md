@@ -77,6 +77,12 @@ Release `20260813T011041Z-7741bbd` incorporates CMAP’s published reference con
 
 The supplied Nebulous Mesh activation package was inspected only as documentation. No script, configuration, WireGuard profile, key file, bootstrap action, health dashboard, or node artifact was extracted for use or executed. The manifest explicitly excludes package private keys, profiles, scripts, and untrusted health output. Live verification confirmed the refined manifest controls, anonymous HTTPS session health, and the loopback-only `127.0.0.1:4174` listener. The release passed 17 automated tests locally and again on ROOT-Gate, followed by a successful production build.
 
+## First Owner-Authorized Project Reclaim Records
+
+Release `20260813T013239Z-0dd522e` publishes two initial Project Reclaim foundation records for Mendocino and Lake Counties. The public registry now identifies NEXINUS RI Systems LLC as the owner-authorized initiating organization and Project Reclaim steward for the initial regional scope. It separately publishes the `Project Reclaim Material Recovery Intake · Mendocino & Lake` framework. The intake framework is explicitly not an inventory, material-availability claim, public site, price, buyer, seller, project, or third-party partnership.
+
+No EIN, private contact information, member data, operational location, material-yard location, worksite, CID, cryptographic signature, or ledger reference appears in the public registry or resource pack. Live verification confirmed exactly one partner-registry entry and one materials-registry entry; projects, jobs, signatures, CIDs, and ledger references remain empty. The public resource pack mirrors those two foundation records and retains `data_unavailable` for projects and cryptographic proof records. The release passed 18 automated tests locally and again on ROOT-Gate, followed by a successful production build.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
