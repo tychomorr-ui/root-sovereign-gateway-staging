@@ -55,6 +55,16 @@ Release `20260813T000130Z-02df4a9` elevated Project Reclaim from a narrow local-
 
 ROOT now serves a public review pack at `/project-reclaim-resource-pack-v0.1.json`. Production verification confirmed that the pack declares mesh synchronization as planned rather than active, retains Lake County as `watchlist`, marks projects and other operational registries as unavailable, and explicitly excludes member action plans, account data, emergency context, provider records, and unpublished county data. The release passed 14 automated tests locally and again on ROOT-Gate, followed by a successful production build. `RECLAIM_MESH_SYNC_BOUNDARY.md` documents the future node and data-class boundary.
 
+## Lake County, Registry, and Offline Map Release
+
+Release `20260813T002921Z-7ede92b` publishes Lake County under the user-authorized regional scope using five reviewed public pathways: county housing information, Social Services, 211 Lake County, behavioral-health access, and the county 24-hour mental-health crisis line. ROOT does not claim provider availability, establish a provider relationship, submit applications, or transmit member data.
+
+The release adds an offline-capable public regional-orientation pack at `/reclaim-regional-map-v0.1.geojson`, containing generalized Mendocino and Lake County boundaries only. It contains no parcels, private addresses, member positions, project sites, material locations, emergency locations, or operational map features. A service worker registers on secure ROOT visits and precaches public ROOT, resource-pack, registry, and map assets for subsequent offline use.
+
+The release also publishes `/project-reclaim-registry-v0.1.json`, a ten-registry foundation for projects, opportunities, jobs, materials, partners, metrics, evidence, signatures, CIDs, and ledger references. All registry arrays remain empty. Each record type is governed by documented source, status, provenance, review, and publication controls in `PROJECT_RECLAIM_REGISTRY_CONTROLS.md`.
+
+Production verification confirmed the Lake County filter, public registry link, service-worker registration marker, two-county and fourteen-source resource pack, two-feature generalized map pack, empty ten-registry response, HTTPS anonymous-session endpoint, and localhost-only `127.0.0.1:4174` listener. The release passed 15 automated tests locally and again on ROOT-Gate, followed by a successful production build.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
