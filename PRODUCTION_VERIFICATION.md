@@ -49,6 +49,12 @@ The live JavaScript bundle contained the Connection Center marker. A disposable 
 
 The live source catalog contains nine reviewed Mendocino County public pathways across housing, food navigation, benefits, work, broad 211 navigation, behavioral-health access, non-crisis support, and 24/7 mental-health crisis support. ROOT sends no provider-facing referral data, submits no application, determines no eligibility, and does not claim provider availability. The detailed source and publication boundary record is maintained in `CONNECTION_CENTER_SOURCES.md`.
 
+## Project Reclaim Foundation Release
+
+Release `20260813T000130Z-02df4a9` elevated Project Reclaim from a narrow local-source view to a flagship restoration and opportunity navigation plate. The public interface now presents the initiative’s fire mitigation, material recovery, workforce development, training, community resilience, and evidence posture while marking operational registries honestly as `DATA UNAVAILABLE` until real records are authorized and verified.
+
+ROOT now serves a public review pack at `/project-reclaim-resource-pack-v0.1.json`. Production verification confirmed that the pack declares mesh synchronization as planned rather than active, retains Lake County as `watchlist`, marks projects and other operational registries as unavailable, and explicitly excludes member action plans, account data, emergency context, provider records, and unpublished county data. The release passed 14 automated tests locally and again on ROOT-Gate, followed by a successful production build. `RECLAIM_MESH_SYNC_BOUNDARY.md` documents the future node and data-class boundary.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
