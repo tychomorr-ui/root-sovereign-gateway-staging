@@ -3,9 +3,9 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile, chmod } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
+import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, issueRecoveryCode, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
 import { normalizePathwayCreate, normalizePathwayStage, pathwayView } from "./pathway-core.mjs";
-import { createLedgerRecord, ledgerView, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeCorrection, reviseLedgerRecord } from "./ledger-core.mjs";
+import { createLedgerRecord, ledgerView, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeConsentGrant, normalizeCorrection, normalizeIdentityProfile, reviseLedgerRecord } from "./ledger-core.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
@@ -16,7 +16,7 @@ const sessionLifetimeMs = 1000 * 60 * 60 * 24 * 14;
 const authWindowMs = 1000 * 60 * 15;
 const maxAuthAttempts = 12;
 const dataEncryptionKey = parseDataEncryptionKey(process.env.ROOT_AUTH_DATA_KEY);
-let data = { version: 3, accounts: [], sessions: [], pathways: [], ledgerRecords: [] };
+let data = { version: 4, accounts: [], sessions: [], pathways: [], ledgerRecords: [], profiles: [], recoveryKits: [] };
 let writeQueue = Promise.resolve();
 const authAttempts = new Map();
 
@@ -30,6 +30,8 @@ async function loadData() {
     data.sessions ||= [];
     data.pathways ||= [];
     data.ledgerRecords ||= [];
+    data.profiles ||= [];
+    data.recoveryKits ||= [];
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
     await persist();
@@ -103,6 +105,17 @@ function ownedLedgerRecord(accountId, recordId) {
   return data.ledgerRecords.find(record => record.accountId === accountId && record.id === recordId) || null;
 }
 
+function profileFor(accountId) {
+  return data.profiles.find(profile => profile.accountId === accountId) || { accountId, displayName: "", selfDescription: "", identityPosture: "private", verification: "self_asserted_not_third_party_verified", updatedAt: null };
+}
+
+function sessionsFor(accountId, currentSessionId) {
+  return data.sessions
+    .filter(session => session.accountId === accountId && session.expiresAt > Date.now())
+    .sort((left, right) => right.createdAt - left.createdAt)
+    .map(session => ({ id: session.id, current: session.id === currentSessionId, createdAt: session.createdAt, expiresAt: session.expiresAt }));
+}
+
 function sameOrigin(request, response, next) {
   const origin = request.get("origin");
   if (!origin) return next();
@@ -171,6 +184,7 @@ app.post("/api/auth/register", sameOrigin, rateLimitAuthentication, async (reque
       const { token, session } = createSession(account.id);
       data.accounts.push(account);
       data.sessions.push(session);
+      data.profiles.push({ accountId: account.id, displayName: "", selfDescription: "", identityPosture: "private", verification: "self_asserted_not_third_party_verified", updatedAt: createdAt });
       data.ledgerRecords.push(createLedgerRecord({ accountId: account.id, kind: "account_control", payload: { statement: "This ROOT account was created with a self-chosen ROOT handle and password. This receipt proves account-control registration only; it does not verify a legal, biometric, or real-world identity." }, now: createdAt }));
       return { account, token };
     });
@@ -214,6 +228,8 @@ app.delete("/api/auth/account", sameOrigin, async (request, response) => {
     data.sessions = data.sessions.filter(session => session.accountId !== current.account.id);
     data.pathways = data.pathways.filter(item => item.accountId !== current.account.id);
     data.ledgerRecords = data.ledgerRecords.filter(record => record.accountId !== current.account.id);
+    data.profiles = data.profiles.filter(profile => profile.accountId !== current.account.id);
+    data.recoveryKits = data.recoveryKits.filter(kit => kit.accountId !== current.account.id);
   });
   response.set("Cache-Control", "no-store");
   response.set("Set-Cookie", cookieFor(request, "", 0));
@@ -276,6 +292,90 @@ app.delete("/api/pathway/:sourceId", sameOrigin, async (request, response) => {
   response.json({ items });
 });
 
+app.get("/api/identity", (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  response.set("Cache-Control", "no-store");
+  response.json({ profile: profileFor(current.account.id), sessions: sessionsFor(current.account.id, current.session.id), recoveryKitActive: data.recoveryKits.some(kit => kit.accountId === current.account.id) });
+});
+
+app.put("/api/identity/profile", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizeIdentityProfile(request.body);
+  if (input.error) return response.status(400).json(input);
+  const profile = await mutate(() => {
+    const existing = data.profiles.find(candidate => candidate.accountId === current.account.id);
+    const next = { accountId: current.account.id, ...input.profile, updatedAt: Date.now() };
+    if (existing) Object.assign(existing, next);
+    else data.profiles.push(next);
+    return profileFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.json({ profile });
+});
+
+app.get("/api/auth/sessions", (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  response.set("Cache-Control", "no-store");
+  response.json({ sessions: sessionsFor(current.account.id, current.session.id) });
+});
+
+app.post("/api/auth/sessions/revoke-other", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const sessions = await mutate(() => {
+    data.sessions = data.sessions.filter(session => session.accountId !== current.account.id || session.id === current.session.id);
+    return sessionsFor(current.account.id, current.session.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.json({ sessions });
+});
+
+app.post("/api/auth/recovery-kit", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const recoveryCode = issueRecoveryCode();
+  await mutate(() => {
+    data.recoveryKits = data.recoveryKits.filter(kit => kit.accountId !== current.account.id);
+    data.recoveryKits.push({ accountId: current.account.id, codeHash: fingerprintToken(recoveryCode), createdAt: Date.now() });
+  });
+  response.set("Cache-Control", "no-store");
+  response.status(201).json({ recoveryCode, notice: "Show once. ROOT stores only a hash. Replacing, revoking, or using the kit invalidates this code." });
+});
+
+app.delete("/api/auth/recovery-kit", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  await mutate(() => { data.recoveryKits = data.recoveryKits.filter(kit => kit.accountId !== current.account.id); });
+  response.set("Cache-Control", "no-store");
+  response.json({ ok: true });
+});
+
+app.post("/api/auth/recover", sameOrigin, rateLimitAuthentication, async (request, response) => {
+  const handle = normalizeHandle(request.body?.handle);
+  const recoveryCode = typeof request.body?.recoveryCode === "string" ? request.body.recoveryCode : "";
+  const password = request.body?.password;
+  const credentialError = validateCredentials(handle, password);
+  if (credentialError) return response.status(400).json({ error: credentialError });
+  const account = data.accounts.find(candidate => candidate.handle === handle);
+  const kit = account ? data.recoveryKits.find(candidate => candidate.accountId === account.id && candidate.codeHash === fingerprintToken(recoveryCode)) : null;
+  if (!account || !kit) return response.status(401).json({ error: "ROOT could not use that recovery kit." });
+  const passwordRecord = await hashPassword(password);
+  const { token } = await mutate(() => {
+    account.password = passwordRecord;
+    data.recoveryKits = data.recoveryKits.filter(candidate => candidate.accountId !== account.id);
+    data.sessions = data.sessions.filter(session => session.accountId !== account.id);
+    const created = createSession(account.id);
+    data.sessions.push(created.session);
+    return created;
+  });
+  response.set("Cache-Control", "no-store");
+  response.set("Set-Cookie", cookieFor(request, token, Math.floor(sessionLifetimeMs / 1000)));
+  response.json({ user: accountView(account) });
+});
+
 app.get("/api/ledger", (request, response) => {
   const current = requireSession(request, response);
   if (!current) return;
@@ -287,7 +387,7 @@ app.get("/api/ledger/export", (request, response) => {
   const current = requireSession(request, response);
   if (!current) return;
   response.set({ "Cache-Control": "no-store", "Content-Disposition": `attachment; filename="root-${current.account.handle}-private-records.json"` });
-  response.json({ format: "root-private-record-export-v1", exportedAt: Date.now(), account: accountView(current.account), records: ledgerFor(current.account.id) });
+  response.json({ format: "root-private-record-export-v2", exportedAt: Date.now(), account: accountView(current.account), profile: profileFor(current.account.id), records: ledgerFor(current.account.id), interoperability: { did: "not_issued", verifiableCredential: "not_issued", signature: "not_issued", credentialStatus: "not_issued", externalPresentation: "not_issued" } });
 });
 
 app.post("/api/ledger/attestations", sameOrigin, async (request, response) => {
@@ -329,6 +429,19 @@ app.post("/api/ledger/consents", sameOrigin, async (request, response) => {
   response.status(201).json({ items });
 });
 
+app.post("/api/ledger/grants", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizeConsentGrant(request.body);
+  if (input.error) return response.status(400).json(input);
+  const items = await mutate(() => {
+    data.ledgerRecords.push(createLedgerRecord({ accountId: current.account.id, kind: "consent_grant", state: "recorded_not_executed", payload: input.payload }));
+    return ledgerFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.status(201).json({ items });
+});
+
 app.post("/api/ledger/:recordId/correct", sameOrigin, async (request, response) => {
   const current = requireSession(request, response);
   if (!current) return;
@@ -363,7 +476,7 @@ app.post("/api/ledger/:recordId/revoke", sameOrigin, async (request, response) =
   const current = requireSession(request, response);
   if (!current) return;
   const source = ownedLedgerRecord(current.account.id, request.params.recordId);
-  if (!source || source.kind !== "consent" || source.state !== "active") return response.status(404).json({ error: "ROOT could not revoke that active private consent receipt." });
+  if (!source || !["consent", "consent_grant"].includes(source.kind) || !["active", "recorded_not_executed"].includes(source.state)) return response.status(404).json({ error: "ROOT could not revoke that active private consent receipt." });
   const items = await mutate(() => {
     Object.assign(source, reviseLedgerRecord(source, { state: "revoked" }));
     return ledgerFor(current.account.id);

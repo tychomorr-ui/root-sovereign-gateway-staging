@@ -111,3 +111,11 @@
 - [x] Add deterministic SHA-256 integrity receipts, correction chains, withdrawal, and member-only JSON export for private proof records without claiming a CID, external ledger, or verified real-world identity.
 - [x] Upgrade Member Space, Proof Ledger, and Truth Talk UI copy and controls so ROOT’s core purpose is self-owned existence, consent, proof, and correction—not directory navigation or Project Reclaim.
 - [x] Add unit and end-to-end coverage for private record ownership, integrity receipts, correction/revocation, export, and account deletion, then release and verify the ROOT core upgrade.
+- [ ] Deliver a second ROOT-centered compound upgrade for sovereign identity infrastructure: member profile, credentials, consent grants, recovery, portability, provenance, correction, revocation, and operational transparency.
+- [ ] Audit the current ROOT identity infrastructure and document every capability that is live, missing, explicitly not offered, or deferred by member-safety constraints.
+- [ ] Implement, test, release, and verify the highest-leverage sovereign identity upgrades without adding external identity brokers, tracking, fabricated credentials, or automatic third-party data exchange.
+- [ ] Add an encrypted member identity profile with an optional private display name, self-descriptions, and member-selected identity posture; do not present it as a legal or third-party-verified identity.
+- [ ] Add one-time recovery-kit generation, rotation, and revocation plus member-visible session management without email recovery, social login, or external recovery custodians.
+- [ ] Add explicit private consent grants with recipient, purpose, data scope, expiration, and revocation fields; do not perform third-party data transfer or represent a grant as externally fulfilled.
+- [ ] Add member-only portable JSON export with a clear integrity/credential interoperability posture and clearly state that no DID, W3C Verifiable Credential, signature, status list, or verifier integration is yet issued.
+- [ ] Add sovereign identity posture, recovery, session, consent, and portability controls to Member Space; add comprehensive ownership and recovery tests; release and verify the completed capability.

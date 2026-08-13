@@ -65,7 +65,8 @@ afterAll(async () => {
 
 describe("ROOT private ledger API", () => {
   it("keeps records member-owned through correction, revocation, export, and deletion", async () => {
-    const firstCookie = await register(`member-${Date.now()}`);
+    const firstHandle = `member-${Date.now()}`;
+    let firstCookie = await register(firstHandle);
     const secondCookie = await register(`other-${Date.now()}`);
 
     const initial = await privateRequest(firstCookie, "/api/ledger");
@@ -88,6 +89,32 @@ describe("ROOT private ledger API", () => {
     expect(correctionPayload.items.find(item => item.id === attestationRecord.id).state).toBe("corrected");
     expect(correctionPayload.items.some(item => item.kind === "correction" && item.relation?.correctsId === attestationRecord.id)).toBe(true);
 
+    const profile = await privateRequest(firstCookie, "/api/identity/profile", "PUT", { displayName: "Private member", selfDescription: "I choose the meaning and visibility of my ROOT account.", identityPosture: "pseudonymous" });
+    expect(profile.status).toBe(200);
+    expect((await profile.json()).profile.verification).toBe("self_asserted_not_third_party_verified");
+
+    const secondSession = await fetch(`${base}/api/auth/login`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify({ handle: firstHandle, password: "test-password-12345" }) });
+    const secondSessionCookie = secondSession.headers.get("set-cookie").split(";")[0];
+    expect(secondSession.status).toBe(200);
+    expect((await privateRequest(firstCookie, "/api/auth/sessions")).status).toBe(200);
+    const sessionRevoke = await privateRequest(firstCookie, "/api/auth/sessions/revoke-other", "POST");
+    expect(sessionRevoke.status).toBe(200);
+    expect((await privateRequest(secondSessionCookie, "/api/ledger")).status).toBe(401);
+
+    const recovery = await privateRequest(firstCookie, "/api/auth/recovery-kit", "POST");
+    expect(recovery.status).toBe(201);
+    const recoveryPayload = await recovery.json();
+    expect(recoveryPayload.recoveryCode).toHaveLength(32);
+
+    const grant = await privateRequest(firstCookie, "/api/ledger/grants", "POST", { recipientLabel: "A future verifier", purpose: "A member-controlled future presentation decision with no present transfer.", dataScopes: ["private_claim_drafts"] });
+    expect(grant.status).toBe(201);
+    const grantPayload = await grant.json();
+    const grantRecord = grantPayload.items.find(item => item.kind === "consent_grant");
+    expect(grantRecord.state).toBe("recorded_not_executed");
+    const grantRevoke = await privateRequest(firstCookie, `/api/ledger/${grantRecord.id}/revoke`, "POST");
+    expect(grantRevoke.status).toBe(200);
+    expect((await grantRevoke.json()).items.find(item => item.id === grantRecord.id).state).toBe("revoked");
+
     const consent = await privateRequest(firstCookie, "/api/ledger/consents", "POST", { scope: "root_private_storage" });
     expect(consent.status).toBe(201);
     const consentPayload = await consent.json();
@@ -98,9 +125,17 @@ describe("ROOT private ledger API", () => {
 
     const exported = await privateRequest(firstCookie, "/api/ledger/export");
     expect(exported.status).toBe(200);
-    expect((await exported.json()).format).toBe("root-private-record-export-v1");
+    const exportPayload = await exported.json();
+    expect(exportPayload.format).toBe("root-private-record-export-v2");
+    expect(exportPayload.profile.identityPosture).toBe("pseudonymous");
+    expect(exportPayload.interoperability.verifiableCredential).toBe("not_issued");
 
-    const deleted = await fetch(`${base}/api/auth/account`, { method: "DELETE", headers: { cookie: firstCookie, origin, "content-type": "application/json" }, body: JSON.stringify({ password: "test-password-12345" }) });
+    const recovered = await fetch(`${base}/api/auth/recover`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify({ handle: firstHandle, recoveryCode: recoveryPayload.recoveryCode, password: "recovered-password-12345" }) });
+    expect(recovered.status).toBe(200);
+    firstCookie = recovered.headers.get("set-cookie").split(";")[0];
+    expect((await privateRequest(firstCookie, "/api/ledger")).status).toBe(200);
+
+    const deleted = await fetch(`${base}/api/auth/account`, { method: "DELETE", headers: { cookie: firstCookie, origin, "content-type": "application/json" }, body: JSON.stringify({ password: "recovered-password-12345" }) });
     expect(deleted.status).toBe(200);
     expect((await privateRequest(firstCookie, "/api/ledger")).status).toBe(401);
   });

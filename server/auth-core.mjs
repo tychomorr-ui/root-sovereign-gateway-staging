@@ -29,6 +29,10 @@ export function issueOpaqueToken() {
   return randomBytes(32).toString("base64url");
 }
 
+export function issueRecoveryCode() {
+  return randomBytes(24).toString("base64url");
+}
+
 export function fingerprintToken(token) {
   return createHash("sha256").update(token).digest("hex");
 }

@@ -2,6 +2,8 @@ import { createHash, randomUUID } from "node:crypto";
 
 const claimTypes = new Set(["report", "firsthand_account", "opinion", "analysis", "correction", "question"]);
 const consentScopes = new Set(["root_private_storage", "member_proof_draft", "truth_talk_private_draft"]);
+const grantScopes = new Set(["identity_profile", "private_attestations", "private_claim_drafts", "private_action_plan"]);
+const identityPostures = new Set(["private", "pseudonymous", "disclosed_by_choice", "organization_steward"]);
 
 function canonicalize(value) {
   if (value === null) return "null";
@@ -60,18 +62,39 @@ export function normalizeConsent(input) {
   return { payload: { scope, statement: `Member authorizes ${scope} inside ROOT only. No external recipient is granted access.`, recipient: "ROOT self-owned account service" } };
 }
 
+export function normalizeConsentGrant(input) {
+  const recipientLabel = cleanText(input?.recipientLabel, 3, 120, "Recipient label");
+  const purpose = cleanText(input?.purpose, 10, 300, "Purpose");
+  const dataScopes = Array.isArray(input?.dataScopes) ? [...new Set(input.dataScopes.filter(scope => typeof scope === "string"))] : [];
+  const expiresAt = input?.expiresAt === null || input?.expiresAt === "" || input?.expiresAt === undefined ? null : Number(input.expiresAt);
+  if (recipientLabel.error || purpose.error) return { error: recipientLabel.error || purpose.error };
+  if (dataScopes.length === 0 || dataScopes.length > 4 || dataScopes.some(scope => !grantScopes.has(scope))) return { error: "Choose one or more permitted private data scopes for the proposed grant." };
+  if (expiresAt !== null && (!Number.isFinite(expiresAt) || expiresAt <= Date.now())) return { error: "A grant expiration must be a future time or left blank." };
+  return { payload: { recipientLabel: recipientLabel.value, purpose: purpose.value, dataScopes, expiresAt, execution: "recorded_not_executed", statement: "This is a private ROOT consent grant record. ROOT has not transferred data or confirmed an external recipient." } };
+}
+
+export function normalizeIdentityProfile(input) {
+  const displayName = typeof input?.displayName === "string" ? input.displayName.trim() : "";
+  const selfDescription = typeof input?.selfDescription === "string" ? input.selfDescription.trim() : "";
+  const identityPosture = typeof input?.identityPosture === "string" ? input.identityPosture : "private";
+  if (displayName.length > 100) return { error: "Display name must be 100 characters or fewer." };
+  if (selfDescription.length > 600) return { error: "Self-description must be 600 characters or fewer." };
+  if (!identityPostures.has(identityPosture)) return { error: "ROOT does not recognize that identity posture." };
+  return { profile: { displayName, selfDescription, identityPosture, verification: "self_asserted_not_third_party_verified" } };
+}
+
 export function normalizeCorrection(input) {
   const statement = cleanText(input?.statement, 20, 1200, "Correction statement");
   if (statement.error) return { error: statement.error };
   return { payload: { statement: statement.value } };
 }
 
-export function createLedgerRecord({ accountId, kind, payload, now = Date.now(), relation = null }) {
+export function createLedgerRecord({ accountId, kind, payload, now = Date.now(), relation = null, state = "active" }) {
   const record = {
     id: randomUUID(),
     accountId,
     kind,
-    state: kind === "consent" ? "active" : "active",
+    state,
     payload,
     relation,
     createdAt: now,
@@ -101,5 +124,5 @@ export function reviseLedgerRecord(record, { state, payload, relation, now = Dat
 }
 
 export function recordKinds() {
-  return { claimTypes: [...claimTypes], consentScopes: [...consentScopes] };
+  return { claimTypes: [...claimTypes], consentScopes: [...consentScopes], grantScopes: [...grantScopes], identityPostures: [...identityPostures] };
 }
