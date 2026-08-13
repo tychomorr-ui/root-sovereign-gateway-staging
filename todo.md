@@ -95,5 +95,5 @@
 - [x] Add a CMAP-aligned public registry-manifest model that contains only approved public record metadata and excludes member, provider, emergency, property, and private operational data.
 - [ ] Implement, test, and release any verified first operational records and CMAP-compatible public manifest changes only after the evidence review is complete.
 - [x] Publish a public CMAP alignment manifest that references the ARCHANGEL/v0 enrollment and quarantine controls, declares no enrolled ROOT peer or active CID/signature/ledger state, and exposes no private registry data.
-- [ ] Review the supplied Nebulous Mesh activation package as documentation only, excluding scripts, configurations, keys, and any activation instructions from execution.
-- [ ] Incorporate only verifiable CMAP trust, freshness, raw-byte verification, counter-monotonicity, and quarantine controls into ROOT’s reference documentation; do not activate a mesh peer or continuous telemetry process.
+- [x] Review the supplied Nebulous Mesh activation package as documentation only, excluding scripts, configurations, keys, and any activation instructions from execution.
+- [x] Incorporate only verifiable CMAP trust, freshness, raw-byte verification, counter-monotonicity, and quarantine controls into ROOT’s reference documentation; do not activate a mesh peer or continuous telemetry process.

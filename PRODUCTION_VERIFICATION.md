@@ -71,6 +71,12 @@ Release `20260813T010230Z-8e17308` adds a public CMAP reference alignment manife
 
 Live verification confirmed the CMAP surface and manifest link in the deployed bundle. The live manifest reports `reference_only_not_enrolled`, `planned_not_active` synchronization, zero enrolled peers, zero public operational records, and `quarantine_pending_human_review` for future inbound material. No Project Reclaim CID, signature, ledger reference, node enrollment, or peer synchronization was fabricated or activated. The release passed 17 automated tests locally and again on ROOT-Gate, followed by a successful production build.
 
+## CMAP Verification-Control Refinement
+
+Release `20260813T011041Z-7741bbd` incorporates CMAP’s published reference controls into ROOT’s reference-only manifest: fail-closed `UNVERIFIED` default state, Ed25519 verification over raw response bytes before JSON parsing, strict canonicalization, maximum 120-second freshness TTL, maximum 30-second future-skew allowance, and counter handling that remains opaque until verified and is then subject to monotonicity review.
+
+The supplied Nebulous Mesh activation package was inspected only as documentation. No script, configuration, WireGuard profile, key file, bootstrap action, health dashboard, or node artifact was extracted for use or executed. The manifest explicitly excludes package private keys, profiles, scripts, and untrusted health output. Live verification confirmed the refined manifest controls, anonymous HTTPS session health, and the loopback-only `127.0.0.1:4174` listener. The release passed 17 automated tests locally and again on ROOT-Gate, followed by a successful production build.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
