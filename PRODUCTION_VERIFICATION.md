@@ -91,6 +91,16 @@ Authenticated members can now create private attestations, narrow internal-stora
 
 The release adds unit coverage for canonical integrity receipts, private claim/consent validation, and state changes, as well as an isolated encrypted-service integration test for ownership denial, correction, consent revocation, export, and account deletion. Production verification created and deleted a disposable account, confirmed its initial account-control receipt, created a private attestation, revoked consent, corrected a private claim, exported the account record view, and confirmed post-deletion access denial. The release passed 23 automated tests locally and again on ROOT-Gate, followed by a successful production build. Public HTTPS health and the loopback-only `127.0.0.1:4174` listener were also confirmed.
 
+## ROOT Sovereign Identity Infrastructure Release
+
+Release `20260813T032039Z-6f1d75b` adds voluntary private identity profiles, private recovery kits, session control, structured proposed consent grants, and expanded member portability to ROOT’s existing private record layer. A profile can contain only an optional display name, optional self-description, and member-selected posture. ROOT marks it `self_asserted_not_third_party_verified` and does not make it public.
+
+Members can create, replace, or revoke a one-time recovery kit. ROOT shows the recovery code once and persists only its hash. Using a valid kit resets the ROOT password, invalidates the kit, and terminates prior sessions. ROOT provides no email recovery, social login, or external recovery custodian. Members can view the count and timing of their own sessions without IP addresses, device fingerprints, or behavioral telemetry, then end all other sessions.
+
+The release also adds structured private consent grants containing a recipient label, purpose, selected scope, optional expiration, and revocation state. Their execution state is `recorded_not_executed`: ROOT neither moves data nor contacts the named recipient. The v2 private export includes the member’s profile and a machine-readable interoperability posture: `did`, `verifiableCredential`, `signature`, `credentialStatus`, and `externalPresentation` are all `not_issued`.
+
+The capability audit is documented in `SOVEREIGN_IDENTITY_INFRASTRUCTURE_GAP_ANALYSIS.md`, including the distinction between ROOT private integrity receipts and future interoperable standards. Production verification created a disposable account, saved a pseudonymous private profile, created and revoked an additional session, created a recovery kit, recorded and revoked a proposed grant, confirmed the v2 export’s honest interoperability state, used the recovery kit to reset the password and invalidate the prior session, deleted the account, and confirmed post-deletion access denial. The release passed 25 automated tests locally and again on ROOT-Gate, followed by a successful production build. HTTPS health and the loopback-only `127.0.0.1:4174` listener remained verified.
+
 ## Remaining Operational Requirement
 
 The RSA private key that was pasted into chat remains compromised. It must not be authorized anywhere and should be removed from every server, repository, workstation, and deployment location where it might have been installed. The dedicated ROOT deploy key is now the authorized routine deployment credential.
