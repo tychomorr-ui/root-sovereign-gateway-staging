@@ -1,0 +1,45 @@
+{
+  "schema": "root.project-reclaim.resource-pack.v0.1",
+  "packState": "public-review-pack",
+  "issuedOn": "2026-08-12",
+  "purpose": "Offline-capable cache of approved public sources and Project Reclaim initiative structure for future Monarch OS nodes.",
+  "initiative": {
+    "name": "Project Reclaim",
+    "headline": "Restore the land. Recover the resource. Rebuild the community.",
+    "status": "in_development",
+    "principle": "The digital serves the physical. The physical proves the digital. The people heal the Monad.",
+    "recordPosture": "data_unavailable"
+  },
+  "counties": [
+    { "id": "mendocino", "label": "Mendocino County", "publicationState": "published", "scope": "Reviewed public pathways are available in ROOT." },
+    { "id": "lake", "label": "Lake County", "publicationState": "watchlist", "scope": "Not published in ROOT until separately authorized." }
+  ],
+  "sources": [
+    { "id": "mendo-housing", "county": "mendocino", "category": "Housing", "title": "Community Development Commission of Mendocino County", "url": "https://www.cdchousing.org/", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-homeless-continuum", "county": "mendocino", "category": "Housing", "title": "Mendocino County Homeless Services Continuum of Care", "url": "https://www.mendocinocounty.gov/departments/social-services/adult-aging-services/mendocino-county-homeless-services-continuum-of-care", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-food-navigation", "county": "mendocino", "category": "Food", "title": "Mendocino County Library Community Resources", "url": "https://www.mendolibrary.org/discover/community-resources", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-benefits", "county": "mendocino", "category": "Benefits", "title": "Mendocino County Employment & Family Assistance Services", "url": "https://www.mendocinocounty.gov/departments/social-services/employment-family-assistance-services", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-work", "county": "mendocino", "category": "Work", "title": "Mendocino County CalWORKs Job Services", "url": "https://www.mendocinocounty.gov/departments/social-services/employment-family-assistance-services/calworks-job-services", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-211", "county": "mendocino", "category": "Navigation", "title": "211 Mendocino", "url": "https://211mendocino.org/", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-behavioral-access", "county": "mendocino", "category": "Support", "title": "Mendocino County Behavioral Health & Recovery Services", "url": "https://www.mendocinocounty.gov/departments/behavioral-health-and-recovery-services", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-warm-line", "county": "mendocino", "category": "Support", "title": "Mendocino County Warm Line", "url": "https://www.mendocinocounty.gov/departments/behavioral-health-and-recovery-services", "verifiedAt": "2026-08-12" },
+    { "id": "mendo-crisis", "county": "mendocino", "category": "Urgent support", "title": "Mendocino County 24/7 Crisis Line", "url": "https://www.mendocinocounty.gov/residents/health/mental-health", "verifiedAt": "2026-08-12" }
+  ],
+  "records": {
+    "projects": "data_unavailable",
+    "opportunities": "data_unavailable",
+    "jobs": "data_unavailable",
+    "materials": "data_unavailable",
+    "partnerOrganizations": "data_unavailable",
+    "evidenceObjects": "data_unavailable"
+  },
+  "exclusions": [
+    "ROOT accounts and sessions",
+    "private member action plans and progress states",
+    "member-provided addresses, property details, emergency context, or location",
+    "provider records, applications, eligibility decisions, and case information",
+    "unpublished county watchlists",
+    "unverified projects, jobs, materials, partners, metrics, CIDs, signatures, or ledger claims"
+  ],
+  "meshStatus": "planned_not_active"
+}

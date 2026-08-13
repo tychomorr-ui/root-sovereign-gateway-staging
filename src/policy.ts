@@ -1,4 +1,6 @@
-export type County = "mendocino" | "lake";
+export type County = string;
+export type CountyPublicationState = "published" | "watchlist" | "review" | "unconfigured";
+export type CountyConfiguration = { id: County; label: string; publicationState: CountyPublicationState; scope: string };
 export type Need = "Housing" | "Food" | "Benefits" | "Work" | "Navigation" | "Support" | "Urgent support";
 export type Source = {
   id: string;
@@ -23,6 +25,11 @@ export const needDescriptions: Record<Need, string> = {
   Support: "Non-crisis emotional support and behavioral-health access information.",
   "Urgent support": "Immediate mental-health crisis information. ROOT does not dispatch emergency services.",
 };
+
+export const countyConfigurations: CountyConfiguration[] = [
+  { id: "mendocino", label: "Mendocino County", publicationState: "published", scope: "Reviewed public pathways are available in ROOT." },
+  { id: "lake", label: "Lake County", publicationState: "watchlist", scope: "Verified watchlist only. It is not publicly available in ROOT or in a resource pack." },
+];
 
 export const sources: Source[] = [
   {
@@ -78,7 +85,7 @@ export const sources: Source[] = [
 ];
 
 export function publicSources() {
-  return sources.filter(source => source.state === "published" && source.county === "mendocino");
+  return sources.filter(source => source.state === "published" && countyConfigurations.some(county => county.id === source.county && county.publicationState === "published"));
 }
 
 export function canPublishLake(role: "directory_steward" | "first_executive") {

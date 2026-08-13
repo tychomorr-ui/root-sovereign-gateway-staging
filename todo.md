@@ -77,3 +77,11 @@
 - [x] Add an authenticated, encrypted-at-rest private action plan with member-selected source steps and no provider-facing data transfer.
 - [x] Add an urgent-support boundary that distinguishes emergency response, 24/7 crisis support, non-crisis support, and ordinary resource navigation without claiming dispatch or clinical services.
 - [x] Add automated policy and action-plan validation tests, then rebuild and release the connection upgrade to ROOT-Gate.
+- [ ] Expand ROOT’s source model from a Mendocino-only directory to source-governed multi-county public resource packs, while keeping Lake County unpublished until separately authorized.
+- [ ] Design future Monarch OS mesh synchronization to distribute only signed, approved public resource packs and Project Reclaim materials—never private member plans, account data, emergency context, or provider records.
+- [ ] Elevate Project Reclaim into ROOT’s flagship restoration, opportunity, training, evidence, and participation architecture using the user-provided initiative directive without fabricating projects, jobs, inventory, partners, or outcomes.
+- [ ] Add source-verification, status, provenance, and explicit publication-state controls for any future Project Reclaim project, opportunity, material, or regional record.
+- [ ] Add a reusable county configuration model that represents Mendocino as published, Lake as watchlist-only, and future counties as explicit unpublished configurations until approved.
+- [ ] Publish a versioned public-only Project Reclaim resource pack for future Monarch OS nodes, while documenting that live mesh synchronization and cryptographic signing are not yet active.
+- [ ] Replace the narrow Project Reclaim view with the initiative’s restoration, mitigation, workforce, training, materials, opportunity, and evidence model, using honest empty states for unverified operational records.
+- [ ] Add tests confirming resource packs exclude private data and unpublished counties, then release and verify the Project Reclaim upgrade.
