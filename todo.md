@@ -100,3 +100,6 @@
 - [x] Publish a public CMAP alignment manifest that references the ARCHANGEL/v0 enrollment and quarantine controls, declares no enrolled ROOT peer or active CID/signature/ledger state, and exposes no private registry data.
 - [x] Review the supplied Nebulous Mesh activation package as documentation only, excluding scripts, configurations, keys, and any activation instructions from execution.
 - [x] Incorporate only verifiable CMAP trust, freshness, raw-byte verification, counter-monotonicity, and quarantine controls into ROOT’s reference documentation; do not activate a mesh peer or continuous telemetry process.
+- [x] Verify and document the live ROOT offline orientation-map pack, CMAP manifest, service-worker boundary, and absence of active peer synchronization, signatures, CIDs, or ledger events.
+- [x] Define an explicitly non-live canonical Project Reclaim record template for future CID, Ed25519 signature, verification, and ledger-reference fields without fabricating proof values.
+- [x] Research radio-mesh transport constraints and draft a phased Monarch OS deployment plan for public-only Project Reclaim pack exchange in Mendocino and Lake Counties.
