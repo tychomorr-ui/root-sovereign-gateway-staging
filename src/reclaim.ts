@@ -3,6 +3,7 @@ import { countyConfigurations, publicSources } from "./policy";
 export type ReclaimStatus = "in_development" | "planned" | "data_unavailable";
 export type RegistryKind = "projects" | "opportunities" | "jobs" | "materials" | "partners" | "metrics" | "evidence" | "signatures" | "cids" | "ledgerReferences";
 export type RegistryDescriptor = { kind: RegistryKind; label: string; purpose: string; requiredForPublication: string[] };
+export type PublicRegistryRecord = { id: string; label: string; countyScope: readonly string[]; status: string; publicSummary: string; sourceAuthority: string; proofState: string; privacyBoundary: string };
 
 export const registryDescriptors: RegistryDescriptor[] = [
   { kind: "projects", label: "Projects", purpose: "Real restoration, mitigation, training, recovery, infrastructure, or community work with a declared scope and status.", requiredForPublication: ["County scope", "authorized source", "status", "public summary", "publication decision"] },
@@ -18,6 +19,29 @@ export const registryDescriptors: RegistryDescriptor[] = [
 ];
 
 export const emptyRegistry = Object.fromEntries(registryDescriptors.map(descriptor => [descriptor.kind, []])) as Record<RegistryKind, []>;
+
+export const firstAuthorizedRegistryRecords: Record<"materials" | "partners", readonly PublicRegistryRecord[]> = {
+  partners: [{
+    id: "pr-nexinus-initiating-organization-v1",
+    label: "NEXINUS RI Systems LLC · Project Reclaim initiating organization",
+    countyScope: ["Mendocino County", "Lake County"],
+    status: "published_owner_authorized",
+    publicSummary: "Owner-authorized initiating organization and Project Reclaim steward for the initial two-county regional scope. This entry does not represent a third-party partnership, government relationship, provider relationship, or endorsement.",
+    sourceAuthority: "Owner authorization received 2026-08-13.",
+    proofState: "CID, cryptographic signature, and ledger reference pending an actual canonical public record and signing event.",
+    privacyBoundary: "No EIN, private contact details, member data, or operational locations are published.",
+  }],
+  materials: [{
+    id: "pr-material-recovery-intake-mendo-lake-v1",
+    label: "Project Reclaim Material Recovery Intake · Mendocino & Lake",
+    countyScope: ["Mendocino County", "Lake County"],
+    status: "published_intake_framework_no_inventory",
+    publicSummary: "A published framework for future source-backed wood, biomass, and recoverable-material listings in the initial two-county region. It is not an inventory listing and does not represent material availability, custody, a site, price, buyer, seller, project, or public submission route.",
+    sourceAuthority: "Owner authorization received 2026-08-13.",
+    proofState: "No material item, CID, cryptographic signature, or ledger reference exists yet.",
+    privacyBoundary: "Future records must omit private property details, exact material-yard or worksite locations, and any non-public custody information unless separately authorized.",
+  }],
+};
 
 export const reclaimInitiative = {
   name: "Project Reclaim",
@@ -51,9 +75,7 @@ export function createPublicReclaimResourcePack() {
     initiative: reclaimInitiative,
     counties: countyConfigurations.map(county => ({ id: county.id, label: county.label, publicationState: county.publicationState, scope: county.scope })),
     sources: publicSources().map(source => ({ id: source.id, county: source.county, category: source.category, title: source.title, url: source.url, action: source.action, contact: source.contact, verifiedAt: source.verifiedAt, sourceKind: source.sourceKind })),
-    records: {
-      ...Object.fromEntries(registryDescriptors.map(descriptor => [descriptor.kind, "data_unavailable"])),
-    },
+    records: Object.fromEntries(registryDescriptors.map(descriptor => [descriptor.kind, firstAuthorizedRegistryRecords[descriptor.kind as keyof typeof firstAuthorizedRegistryRecords] ?? "data_unavailable"])),
     offlineMap: { schema: "root.project-reclaim.regional-map.v0.1", url: "/reclaim-regional-map-v0.1.geojson", status: "public_orientation_boundaries_only" },
     exclusions: [
       "ROOT accounts and sessions",

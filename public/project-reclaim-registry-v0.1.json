@@ -1,14 +1,36 @@
 {
   "schema": "root.project-reclaim.registry.v0.1",
-  "status": "foundation_only",
+  "status": "initial_owner_authorized_records",
   "publishedOn": "2026-08-13",
-  "notice": "This registry defines publication controls. It contains no verified operational records yet.",
+  "notice": "This registry contains one owner-authorized initiating-organization record and one two-county material-recovery intake framework. It does not claim material inventory, project work, jobs, a third-party partner, sites, CIDs, signatures, or ledger records.",
   "registries": {
     "projects": [],
     "opportunities": [],
     "jobs": [],
-    "materials": [],
-    "partners": [],
+    "materials": [
+      {
+        "id": "pr-material-recovery-intake-mendo-lake-v1",
+        "label": "Project Reclaim Material Recovery Intake · Mendocino & Lake",
+        "countyScope": ["Mendocino County", "Lake County"],
+        "status": "published_intake_framework_no_inventory",
+        "publicSummary": "A published framework for future source-backed wood, biomass, and recoverable-material listings in the initial two-county region. It is not an inventory listing and does not represent material availability, custody, a site, price, buyer, seller, project, or public submission route.",
+        "sourceAuthority": "Owner authorization received 2026-08-13.",
+        "proofState": "No material item, CID, cryptographic signature, or ledger reference exists yet.",
+        "privacyBoundary": "Future records must omit private property details, exact material-yard or worksite locations, and any non-public custody information unless separately authorized."
+      }
+    ],
+    "partners": [
+      {
+        "id": "pr-nexinus-initiating-organization-v1",
+        "label": "NEXINUS RI Systems LLC · Project Reclaim initiating organization",
+        "countyScope": ["Mendocino County", "Lake County"],
+        "status": "published_owner_authorized",
+        "publicSummary": "Owner-authorized initiating organization and Project Reclaim steward for the initial two-county regional scope. This entry does not represent a third-party partnership, government relationship, provider relationship, or endorsement.",
+        "sourceAuthority": "Owner authorization received 2026-08-13.",
+        "proofState": "CID, cryptographic signature, and ledger reference pending an actual canonical public record and signing event.",
+        "privacyBoundary": "No EIN, private contact details, member data, or operational locations are published."
+      }
+    ],
     "metrics": [],
     "evidence": [],
     "signatures": [],

@@ -1,6 +1,6 @@
 {
   "schema": "root.project-reclaim.resource-pack.v0.1",
-  "packState": "public-review-pack",
+  "packState": "public-review-pack-with-owner-authorized-foundation-records",
   "issuedOn": "2026-08-13",
   "purpose": "Offline-capable cache of approved public sources, regional orientation data, and Project Reclaim initiative structure for future Monarch OS nodes.",
   "initiative": {
@@ -38,8 +38,18 @@
     "projects": "data_unavailable",
     "opportunities": "data_unavailable",
     "jobs": "data_unavailable",
-    "materials": "data_unavailable",
-    "partners": "data_unavailable",
+    "materials": [{
+      "id": "pr-material-recovery-intake-mendo-lake-v1",
+      "status": "published_intake_framework_no_inventory",
+      "countyScope": ["Mendocino County", "Lake County"],
+      "proofState": "No material item, CID, cryptographic signature, or ledger reference exists yet."
+    }],
+    "partners": [{
+      "id": "pr-nexinus-initiating-organization-v1",
+      "status": "published_owner_authorized",
+      "countyScope": ["Mendocino County", "Lake County"],
+      "proofState": "CID, cryptographic signature, and ledger reference pending an actual canonical public record and signing event."
+    }],
     "metrics": "data_unavailable",
     "evidence": "data_unavailable",
     "signatures": "data_unavailable",

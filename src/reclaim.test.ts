@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createPublicReclaimResourcePack, emptyRegistry, reclaimInitiative, registryDescriptors } from "./reclaim";
+import { createPublicReclaimResourcePack, emptyRegistry, firstAuthorizedRegistryRecords, reclaimInitiative, registryDescriptors } from "./reclaim";
 
 describe("Project Reclaim public resource pack", () => {
   it("contains only published county sources and never the Lake County watchlist", () => {
@@ -10,9 +10,14 @@ describe("Project Reclaim public resource pack", () => {
     expect(pack.counties.find(county => county.id === "lake")?.publicationState).toBe("published");
   });
 
-  it("marks operational registries as unavailable rather than fabricating records", () => {
+  it("publishes only the two owner-authorized registry entries and keeps all other operational registries unavailable", () => {
     const pack = createPublicReclaimResourcePack();
-    expect(Object.values(pack.records).every(value => value === "data_unavailable")).toBe(true);
+    expect(pack.records.partners).toHaveLength(1);
+    expect(pack.records.materials).toHaveLength(1);
+    expect(pack.records.projects).toBe("data_unavailable");
+    expect(pack.records.jobs).toBe("data_unavailable");
+    expect(firstAuthorizedRegistryRecords.partners[0].label).toContain("NEXINUS RI Systems LLC");
+    expect(firstAuthorizedRegistryRecords.materials[0].status).toBe("published_intake_framework_no_inventory");
     expect(reclaimInitiative.pillars).toHaveLength(6);
   });
 
@@ -27,5 +32,15 @@ describe("Project Reclaim public resource pack", () => {
     expect(registryDescriptors).toHaveLength(10);
     expect(Object.values(emptyRegistry).every(records => Array.isArray(records) && records.length === 0)).toBe(true);
     expect(registryDescriptors.every(descriptor => descriptor.requiredForPublication.length > 0)).toBe(true);
+  });
+
+  it("does not publish business identifiers, private locations, inventory, or a third-party partner claim", () => {
+    const published = JSON.stringify(firstAuthorizedRegistryRecords).toLowerCase();
+    const privateIdentifier = ["42", "2574640"].join("-");
+    expect(published).not.toContain(privateIdentifier);
+    expect(published).toContain("no ein");
+    expect(published).toContain("not an inventory listing");
+    expect(published).toContain("not represent a third-party partnership");
+    expect(published).toContain("exact material-yard");
   });
 });
