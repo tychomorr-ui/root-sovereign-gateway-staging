@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { decryptStore, encryptStore, fingerprintToken, hashPassword, issueOpaqueToken, issueRecoveryCode, normalizeHandle, parseDataEncryptionKey, validateCredentials, verifyPassword } from "./auth-core.mjs";
 import { normalizePathwayCreate, normalizePathwayStage, pathwayView } from "./pathway-core.mjs";
-import { createLedgerRecord, ledgerView, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeConsentGrant, normalizeCorrection, normalizeIdentityProfile, reviseLedgerRecord } from "./ledger-core.mjs";
+import { createLedgerRecord, createVouchRecord, ledgerView, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeConsentGrant, normalizeCorrection, normalizeIdentityProfile, normalizePresentationDraft, normalizeVouch, reviseLedgerRecord, reviseVouchRecord } from "./ledger-core.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
@@ -16,7 +16,7 @@ const sessionLifetimeMs = 1000 * 60 * 60 * 24 * 14;
 const authWindowMs = 1000 * 60 * 15;
 const maxAuthAttempts = 12;
 const dataEncryptionKey = parseDataEncryptionKey(process.env.ROOT_AUTH_DATA_KEY);
-let data = { version: 4, accounts: [], sessions: [], pathways: [], ledgerRecords: [], profiles: [], recoveryKits: [] };
+let data = { version: 5, accounts: [], sessions: [], pathways: [], ledgerRecords: [], profiles: [], recoveryKits: [], vouches: [] };
 let writeQueue = Promise.resolve();
 const authAttempts = new Map();
 
@@ -32,6 +32,7 @@ async function loadData() {
     data.ledgerRecords ||= [];
     data.profiles ||= [];
     data.recoveryKits ||= [];
+    data.vouches ||= [];
   } catch (error) {
     if (error?.code !== "ENOENT") throw error;
     await persist();
@@ -107,6 +108,21 @@ function ownedLedgerRecord(accountId, recordId) {
 
 function profileFor(accountId) {
   return data.profiles.find(profile => profile.accountId === accountId) || { accountId, displayName: "", selfDescription: "", identityPosture: "private", verification: "self_asserted_not_third_party_verified", updatedAt: null };
+}
+
+function vouchView(vouch, viewerAccountId) {
+  const direction = vouch.voucherAccountId === viewerAccountId ? "issued" : "received";
+  const counterparty = data.accounts.find(account => account.id === (direction === "issued" ? vouch.recipientAccountId : vouch.voucherAccountId));
+  if (!counterparty) return null;
+  return { id: vouch.id, direction, counterpartyHandle: counterparty.handle, scope: vouch.payload.scope, statement: vouch.payload.statement, strength: vouch.payload.strength, state: vouch.state, integrityDigest: vouch.integrityDigest, createdAt: vouch.createdAt, updatedAt: vouch.updatedAt, privacy: "member_to_member_private", credential: "not_issued" };
+}
+
+function vouchesFor(accountId) {
+  return data.vouches
+    .filter(vouch => vouch.voucherAccountId === accountId || vouch.recipientAccountId === accountId)
+    .sort((left, right) => right.updatedAt - left.updatedAt)
+    .map(vouch => vouchView(vouch, accountId))
+    .filter(Boolean);
 }
 
 function sessionsFor(accountId, currentSessionId) {
@@ -230,6 +246,7 @@ app.delete("/api/auth/account", sameOrigin, async (request, response) => {
     data.ledgerRecords = data.ledgerRecords.filter(record => record.accountId !== current.account.id);
     data.profiles = data.profiles.filter(profile => profile.accountId !== current.account.id);
     data.recoveryKits = data.recoveryKits.filter(kit => kit.accountId !== current.account.id);
+    data.vouches = data.vouches.filter(vouch => vouch.voucherAccountId !== current.account.id && vouch.recipientAccountId !== current.account.id);
   });
   response.set("Cache-Control", "no-store");
   response.set("Set-Cookie", cookieFor(request, "", 0));
@@ -387,7 +404,43 @@ app.get("/api/ledger/export", (request, response) => {
   const current = requireSession(request, response);
   if (!current) return;
   response.set({ "Cache-Control": "no-store", "Content-Disposition": `attachment; filename="root-${current.account.handle}-private-records.json"` });
-  response.json({ format: "root-private-record-export-v2", exportedAt: Date.now(), account: accountView(current.account), profile: profileFor(current.account.id), records: ledgerFor(current.account.id), interoperability: { did: "not_issued", verifiableCredential: "not_issued", signature: "not_issued", credentialStatus: "not_issued", externalPresentation: "not_issued" } });
+  response.json({ format: "root-private-record-export-v3", exportedAt: Date.now(), account: accountView(current.account), profile: profileFor(current.account.id), records: ledgerFor(current.account.id), vouches: vouchesFor(current.account.id), interoperability: { did: "not_issued", verifiableCredential: "not_issued", signature: "not_issued", credentialStatus: "not_issued", externalPresentation: "draft_only_not_issued" } });
+});
+
+app.get("/api/vouches", (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  response.set("Cache-Control", "no-store");
+  response.json({ items: vouchesFor(current.account.id) });
+});
+
+app.post("/api/vouches", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizeVouch(request.body);
+  if (input.error) return response.status(400).json(input);
+  const recipient = data.accounts.find(account => account.handle === input.recipientHandle);
+  if (!recipient) return response.status(404).json({ error: "ROOT could not find that private vouch recipient." });
+  if (recipient.id === current.account.id) return response.status(400).json({ error: "A member cannot create a private vouch for their own ROOT account." });
+  const items = await mutate(() => {
+    data.vouches.push(createVouchRecord({ voucherAccountId: current.account.id, recipientAccountId: recipient.id, payload: input.payload }));
+    return vouchesFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.status(201).json({ items });
+});
+
+app.post("/api/vouches/:vouchId/withdraw", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const vouch = data.vouches.find(candidate => candidate.id === request.params.vouchId && candidate.voucherAccountId === current.account.id && candidate.state === "active");
+  if (!vouch) return response.status(404).json({ error: "ROOT could not withdraw that active private vouch." });
+  const items = await mutate(() => {
+    Object.assign(vouch, reviseVouchRecord(vouch, { state: "withdrawn" }));
+    return vouchesFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.json({ items });
 });
 
 app.post("/api/ledger/attestations", sameOrigin, async (request, response) => {
@@ -442,6 +495,19 @@ app.post("/api/ledger/grants", sameOrigin, async (request, response) => {
   response.status(201).json({ items });
 });
 
+app.post("/api/ledger/presentation-drafts", sameOrigin, async (request, response) => {
+  const current = requireSession(request, response);
+  if (!current) return;
+  const input = normalizePresentationDraft(request.body);
+  if (input.error) return response.status(400).json(input);
+  const items = await mutate(() => {
+    data.ledgerRecords.push(createLedgerRecord({ accountId: current.account.id, kind: "selective_disclosure_draft", state: "recorded_not_executed", payload: input.payload }));
+    return ledgerFor(current.account.id);
+  });
+  response.set("Cache-Control", "no-store");
+  response.status(201).json({ items });
+});
+
 app.post("/api/ledger/:recordId/correct", sameOrigin, async (request, response) => {
   const current = requireSession(request, response);
   if (!current) return;
@@ -476,7 +542,7 @@ app.post("/api/ledger/:recordId/revoke", sameOrigin, async (request, response) =
   const current = requireSession(request, response);
   if (!current) return;
   const source = ownedLedgerRecord(current.account.id, request.params.recordId);
-  if (!source || !["consent", "consent_grant"].includes(source.kind) || !["active", "recorded_not_executed"].includes(source.state)) return response.status(404).json({ error: "ROOT could not revoke that active private consent receipt." });
+  if (!source || !["consent", "consent_grant", "selective_disclosure_draft"].includes(source.kind) || !["active", "recorded_not_executed"].includes(source.state)) return response.status(404).json({ error: "ROOT could not revoke that active private consent or presentation receipt." });
   const items = await mutate(() => {
     Object.assign(source, reviseLedgerRecord(source, { state: "revoked" }));
     return ledgerFor(current.account.id);

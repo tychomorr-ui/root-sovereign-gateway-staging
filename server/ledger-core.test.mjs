@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createLedgerRecord, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeConsentGrant, normalizeIdentityProfile, reviseLedgerRecord } from "./ledger-core.mjs";
+import { createLedgerRecord, createVouchRecord, normalizeAttestation, normalizeClaim, normalizeConsent, normalizeConsentGrant, normalizeIdentityProfile, normalizePresentationDraft, normalizeVouch, reviseLedgerRecord, reviseVouchRecord } from "./ledger-core.mjs";
 
 describe("ROOT member ledger core", () => {
   it("creates deterministic integrity receipts from the same public record facts", () => {
@@ -35,5 +35,21 @@ describe("ROOT member ledger core", () => {
     const withdrawn = reviseLedgerRecord(record, { state: "withdrawn", now: 2000 });
     expect(withdrawn.integrityDigest).not.toBe(record.integrityDigest);
     expect(withdrawn.state).toBe("withdrawn");
+  });
+
+  it("keeps a vouch constrained, private, and integrity-bound without issuing a credential", () => {
+    const vouch = normalizeVouch({ recipientHandle: "member-two", scope: "specific_interaction", strength: 4, statement: "I privately vouch for this member based on a specific interaction I personally observed." });
+    expect(vouch.payload.credential).toBe("not_issued");
+    const record = createVouchRecord({ voucherAccountId: "member-1", recipientAccountId: "member-2", payload: vouch.payload, now: 1000 });
+    const withdrawn = reviseVouchRecord(record, { state: "withdrawn", now: 2000 });
+    expect(withdrawn.integrityDigest).not.toBe(record.integrityDigest);
+    expect(normalizeVouch({ recipientHandle: "member-1", scope: "score", strength: 8, statement: "This should fail because ROOT does not create universal scores from vouches." }).error).toMatch(/scope/i);
+  });
+
+  it("creates only short-lived selective-disclosure drafts with an HTTPS recipient and verifier challenge", () => {
+    const draft = normalizePresentationDraft({ recipientOrigin: "https://xinus.one", recipientLabel: "XINUS", purpose: "Prove a chosen ROOT posture in a future member-approved exchange.", requestedClaims: ["identity_posture"], challenge: "member_challenge_123", expiresAt: Date.now() + 60_000 });
+    expect(draft.payload.execution).toBe("recorded_not_executed");
+    expect(draft.payload.presentationState).toBe("draft_not_executed");
+    expect(normalizePresentationDraft({ recipientOrigin: "http://insecure.example", recipientLabel: "Test", purpose: "This invalid destination should be rejected before any presentation draft exists.", requestedClaims: ["identity_posture"], challenge: "member_challenge_123", expiresAt: Date.now() + 60_000 }).error).toMatch(/HTTPS/i);
   });
 });

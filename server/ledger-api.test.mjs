@@ -115,6 +115,34 @@ describe("ROOT private ledger API", () => {
     expect(grantRevoke.status).toBe(200);
     expect((await grantRevoke.json()).items.find(item => item.id === grantRecord.id).state).toBe("revoked");
 
+    const selfVouch = await privateRequest(firstCookie, "/api/vouches", "POST", { recipientHandle: firstHandle, scope: "account_control", strength: 3, statement: "A member must not be able to create a private ROOT vouch for their own account." });
+    expect(selfVouch.status).toBe(400);
+    const vouch = await privateRequest(firstCookie, "/api/vouches", "POST", { recipientHandle: "missing-vouch-target", scope: "specific_interaction", strength: 4, statement: "I privately vouch for this member based on a specific interaction I personally observed." });
+    expect(vouch.status).toBe(404);
+    const secondHandle = `vouched-${Date.now()}`;
+    const receivedCookie = await register(secondHandle);
+    const issuedVouch = await privateRequest(firstCookie, "/api/vouches", "POST", { recipientHandle: secondHandle, scope: "specific_interaction", strength: 4, statement: "I privately vouch for this member based on a specific interaction I personally observed." });
+    expect(issuedVouch.status).toBe(201);
+    const issuedVouchPayload = await issuedVouch.json();
+    const vouchRecord = issuedVouchPayload.items.find(item => item.direction === "issued");
+    expect(vouchRecord.credential).toBe("not_issued");
+    const unrelatedVouches = await privateRequest(secondCookie, "/api/vouches");
+    expect((await unrelatedVouches.json()).items.some(item => item.id === vouchRecord.id)).toBe(false);
+    const receivedVouches = await privateRequest(receivedCookie, "/api/vouches");
+    expect((await receivedVouches.json()).items.some(item => item.direction === "received" && item.id === vouchRecord.id)).toBe(true);
+    const recipientWithdrawAttempt = await privateRequest(receivedCookie, `/api/vouches/${vouchRecord.id}/withdraw`, "POST");
+    expect(recipientWithdrawAttempt.status).toBe(404);
+    const vouchWithdraw = await privateRequest(firstCookie, `/api/vouches/${vouchRecord.id}/withdraw`, "POST");
+    expect(vouchWithdraw.status).toBe(200);
+    expect((await vouchWithdraw.json()).items.find(item => item.id === vouchRecord.id).state).toBe("withdrawn");
+
+    const presentationDraft = await privateRequest(firstCookie, "/api/ledger/presentation-drafts", "POST", { recipientOrigin: "https://xinus.one", recipientLabel: "XINUS", purpose: "Prepare a future member-approved presentation with no current transfer.", requestedClaims: ["identity_posture"], challenge: "private_member_challenge_123", expiresAt: Date.now() + 60_000 });
+    expect(presentationDraft.status).toBe(201);
+    const presentationRecord = (await presentationDraft.json()).items.find(item => item.kind === "selective_disclosure_draft");
+    expect(presentationRecord.state).toBe("recorded_not_executed");
+    const presentationRevoke = await privateRequest(firstCookie, `/api/ledger/${presentationRecord.id}/revoke`, "POST");
+    expect(presentationRevoke.status).toBe(200);
+
     const consent = await privateRequest(firstCookie, "/api/ledger/consents", "POST", { scope: "root_private_storage" });
     expect(consent.status).toBe(201);
     const consentPayload = await consent.json();
@@ -126,9 +154,10 @@ describe("ROOT private ledger API", () => {
     const exported = await privateRequest(firstCookie, "/api/ledger/export");
     expect(exported.status).toBe(200);
     const exportPayload = await exported.json();
-    expect(exportPayload.format).toBe("root-private-record-export-v2");
+    expect(exportPayload.format).toBe("root-private-record-export-v3");
     expect(exportPayload.profile.identityPosture).toBe("pseudonymous");
     expect(exportPayload.interoperability.verifiableCredential).toBe("not_issued");
+    expect(exportPayload.vouches.some(item => item.id === vouchRecord.id && item.state === "withdrawn")).toBe(true);
 
     const recovered = await fetch(`${base}/api/auth/recover`, { method: "POST", headers: { origin, "content-type": "application/json" }, body: JSON.stringify({ handle: firstHandle, recoveryCode: recoveryPayload.recoveryCode, password: "recovered-password-12345" }) });
     expect(recovered.status).toBe(200);
@@ -138,5 +167,7 @@ describe("ROOT private ledger API", () => {
     const deleted = await fetch(`${base}/api/auth/account`, { method: "DELETE", headers: { cookie: firstCookie, origin, "content-type": "application/json" }, body: JSON.stringify({ password: "recovered-password-12345" }) });
     expect(deleted.status).toBe(200);
     expect((await privateRequest(firstCookie, "/api/ledger")).status).toBe(401);
+    expect((await privateRequest(receivedCookie, "/api/vouches")).status).toBe(200);
+    expect((await (await privateRequest(receivedCookie, "/api/vouches")).json()).items.some(item => item.id === vouchRecord.id)).toBe(false);
   });
 });

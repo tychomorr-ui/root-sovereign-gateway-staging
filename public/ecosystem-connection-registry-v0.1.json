@@ -1,0 +1,19 @@
+{
+  "format": "root-ecosystem-connection-registry-v0.1",
+  "status": "link_only_and_endpoint_pending",
+  "memberDataTransfer": "not_enabled",
+  "nodeEnrollment": "not_enabled",
+  "knownPublicOrigins": [
+    "https://universaltruth.life/",
+    "https://resonate-earth.live/",
+    "https://xinus.one/",
+    "https://tesseract.manus.space/",
+    "https://xinusdash-doy5g86k.manus.space/",
+    "https://sovereignapp-hkcgwye7.manus.space/",
+    "https://nexinus-ri-systems-llc.figma.site/"
+  ],
+  "endpointPendingInstances": [
+    "IWA-SAGE-APP", "ROOT_SOVEREIGN-IDENTITY", "PROJECT-RECLAIM", "XinUS-Clarity", "Sovereign_Provenance-Console", "The_Portal", "ARCHANGEL_CONTROL-PLANE", "Tesseract-A", "Monarch-OS"
+  ],
+  "boundary": "A supplied instance name or network address is not a trust grant, credential issuer, data recipient, or enrolled ROOT node."
+}
